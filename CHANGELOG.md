@@ -17,6 +17,45 @@ décider s'il faut créer un point : écrire « aucun » est une réponse valabl
 
 ---
 
+## 1.2.0 — 2026-08-22
+
+Adoption d'un projet qui a **déjà** ses propres règles.
+
+### Ajouté
+
+- `/socle adopt` : inventorie les règles existantes d'un projet (`CLAUDE.md`, `AGENTS.md`,
+  `.cursorrules`, `docs/`, `CONTRIBUTING`…), les classe en cinq catégories — **déjà
+  couverte** · **générique à promouvoir** · **plus stricte que le socle** · **spécifique au
+  projet** · **en contradiction** — présente le tableau, et n'applique que ce que
+  l'utilisateur valide. Une règle qui monte dans le socle s'imposant à tous les projets,
+  aucune promotion n'est automatique.
+- [`DEMARRER.md`](DEMARRER.md) : marche à suivre pour démarrer un projet sur le socle —
+  prérequis, installation, **ordre** dans lequel remplir le squelette, premier point dans le
+  pipeline, et les cinq erreurs classiques.
+- L'adoption se termine par un `check` et la création des **points de mise en conformité** :
+  un projet adopté n'est pas un projet conforme, il est mesuré.
+
+### Corrigé
+
+- **Amorçage impossible** : `/socle install` était censé installer le socle, mais la commande
+  `/socle` est elle-même **distribuée par le socle** — elle n'existe donc pas dans un projet
+  où le socle n'est pas encore installé. Ajout de
+  [`socle/outils/installer.ps1`](socle/outils/installer.ps1) (PowerShell) et
+  [`installer.sh`](socle/outils/installer.sh) (POSIX) — `sh` n'étant pas dans le `PATH` de
+  PowerShell, la version `.ps1` est nécessaire sous Windows. Ils font la copie mécanique selon  le manifeste, détectent si le projet a déjà ses propres règles (auquel cas ils ne posent **que**
+  les fichiers distribués, sans toucher aux `CLAUDE.md`/`docs/` existants) et activent le hook.
+  La réconciliation des règles reste à `/socle adopt`, disponible dès que le script a tourné.
+  *Impact rétroactif : aucun.*
+- `install` sur un projet ayant déjà un `CLAUDE.md` laissait le socle **inerte** : le fichier
+  n'étant pas écrasé, l'index du projet ne mentionnait pas le socle et aucun agent ne le
+  lisait. `install` **insère** désormais les sections *Socle commun* et *Dérogations* dans le
+  `CLAUDE.md` existant. Et il **détecte** les règles préexistantes : dans ce cas il bascule
+  de lui-même en `adopt` au lieu de renvoyer l'utilisateur vers une autre commande — `adopt`
+  s'arrêtant de toute façon sur le classement à valider, l'aller-retour ne protégeait rien.
+  *Impact rétroactif : aucun (aucun projet installé à ce jour).*
+
+---
+
 ## 1.1.0 — 2026-08-22
 
 Interopérabilité **entre les projets du socle**, et plus seulement avec l'extérieur.

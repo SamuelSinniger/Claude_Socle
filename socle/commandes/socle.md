@@ -1,6 +1,6 @@
 ---
-description: Gérer le socle commun de ce projet — état de synchro, mise à jour, promotion d'une règle, installation
-argument-hint: "check | update | promote \"<la règle>\" | install [chemin-du-dépôt-socle]"
+description: Gérer le socle commun de ce projet — état de synchro, mise à jour, promotion d'une règle, installation dans un projet neuf ou adoption d'un projet qui a déjà ses règles
+argument-hint: "check | update | promote \"<la règle>\" | install [chemin] | adopt [chemin]"
 ---
 
 Verbe demandé : $ARGUMENTS  *(vide = `check`)*
@@ -105,23 +105,84 @@ projet qu'on découvre les règles manquantes.
    doit lui aussi faire `/socle update` pour recevoir sa propre règle.
 7. Ne rien commiter, ni dans le socle ni ici.
 
+## `adopt [chemin]` — faire entrer dans le socle un projet qui a déjà ses règles
+
+Pour un projet **existant** qui possède ses propres règles Claude. `install` seul ne les
+regarderait pas : il poserait le socle à côté, laissant deux corps de règles qui s'ignorent.
+`adopt` réconcilie d'abord, installe ensuite. **Aucune règle n'est déplacée sans ton accord.**
+
+1. **Inventorier les règles existantes du projet.** Chercher partout où elles se cachent :
+   `CLAUDE.md`, `AGENTS.md`, `.cursorrules` et équivalents, `.claude/**`, `CONTRIBUTING*`,
+   `docs/**`, les sections « conventions » d'un `README`, les commentaires d'en-tête qui
+   énoncent une règle. Extraire **une règle par ligne**, dans les termes du projet.
+
+2. **Classer chaque règle** dans exactement une des cinq catégories :
+
+   | Catégorie | Critère | Destination |
+   |---|---|---|
+   | **Déjà couverte** | une règle `R-###` du socle dit la même chose | rien — mais la lister, pour que l'utilisateur voie la couverture |
+   | **Générique, absente du socle** | vraie pour n'importe quel projet | candidate à `promote` |
+   | **Plus stricte que le socle** | même intention, exigence supérieure | proposer de **durcir le socle** (bump MAJEURE) *ou* de garder la version stricte en règle de projet |
+   | **Spécifique au projet** | nomme une techno, un composant, un domaine propre au dépôt | `docs/conventions.md` du projet |
+   | **En contradiction** | incompatible avec une règle du socle | **décision requise** : dérogation déclarée, ou correction du socle si la règle du projet est la bonne |
+
+   Deux pièges à éviter dans ce classement : ranger en « spécifique » une règle simplement
+   *formulée* avec le vocabulaire du projet alors que son fond est général (elle est
+   générique — reformule-la) ; et déclarer « déjà couverte » une règle qui dit *presque* la
+   même chose (une nuance dans une règle est souvent tout son intérêt — c'est du « plus
+   strict »).
+
+3. **Présenter le classement à l'utilisateur** sous forme de tableau, et **s'arrêter là**.
+   Une règle qui monte dans le socle s'imposera à tous les autres projets : ce n'est pas une
+   décision d'agent. Pour chaque candidate, proposer l'identifiant `R-###` et la formulation
+   au format du socle, pour qu'il n'ait qu'à valider ou corriger.
+
+4. **Appliquer ce qui a été validé**, dans cet ordre :
+   - les promotions et durcissements, via la procédure `promote` (règle, entrée de CHANGELOG
+     avec impact rétroactif, manifeste régénéré) ;
+   - `install` pour poser le socle ;
+   - les règles spécifiques retenues dans `docs/conventions.md`, réécrites au format du socle ;
+   - les contradictions arbitrées en dérogations, dans le tableau du `CLAUDE.md`.
+
+5. **Rendre l'adoption vérifiable.** Une fois le socle posé, lancer un `check`, puis créer les
+   points de **mise en conformité** pour les règles du socle que ce projet ne respecte pas
+   encore (même logique que `update`, cf. l'impact rétroactif du CHANGELOG). Un projet adopté
+   n'est pas un projet conforme : il est *mesuré*.
+
+6. Inscrire le projet dans `projets.md`, colonne dérogations remplie.
+
 ## `install [chemin]` — poser le socle dans un projet neuf
 
-1. Localiser le dépôt socle (argument, ou champ `source` d'un `socle.json` existant, ou
+1. **Détecter si le projet est réellement neuf**, avant toute copie. Chercher des règles
+   préexistantes : `CLAUDE.md`, `AGENTS.md`, `.cursorrules` et équivalents, `.claude/**`,
+   `CONTRIBUTING*`, sections « conventions » d'un `README`.
+   - Aucun de ces fichiers, ou seulement des fichiers **issus du socle** (ils portent la
+     section `⚙️ Socle commun`, ou un `socle/socle.json` est présent) → projet neuf,
+     continuer.
+   - Des règles **étrangères au socle** → **basculer en `adopt`** et le dire :
+     « ce projet a déjà ses règles, je passe par l'adoption ». Pas de question préalable :
+     `adopt` fait tout ce que fait `install`, en réconciliant d'abord, et il s'arrête de
+     toute façon pour te faire valider le classement avant d'écrire quoi que ce soit.
+
+2. Localiser le dépôt socle (argument, ou champs `clone_local` / `depot` du manifeste, ou
    demander).
-2. Copier **toutes** les entrées de `fichiers` vers leurs destinations, plus
+3. Copier **toutes** les entrées de `fichiers` vers leurs destinations, plus
    `socle/socle.json`.
-3. Copier les `modeles` **uniquement vers les destinations qui n'existent pas encore**. Un
+4. Copier les `modeles` **uniquement vers les destinations qui n'existent pas encore**. Un
    `CLAUDE.md` ou un `docs/api.md` déjà présent n'est jamais écrasé : le signaler.
-4. Activer le hook : `git config core.hooksPath .githooks`.
-5. Inscrire le projet dans le `projets.md` du dépôt socle.
-6. Dire à l'utilisateur ce qui reste à remplir : les `⟨…⟩` des modèles
+   **Exception nécessaire — le `CLAUDE.md` existant** : ne pas l'écraser, mais y **insérer**
+   les sections `⚙️ Socle commun` et `🔶 Dérogations au socle` si elles manquent (contenu pris
+   du modèle, placé après la section *Projet*). Sans ça, l'index du projet ne mentionne pas le
+   socle, et les agents ne le liront jamais : le socle serait installé et inerte.
+5. Activer le hook : `git config core.hooksPath .githooks`.
+6. Inscrire le projet dans le `projets.md` du dépôt socle.
+7. Dire à l'utilisateur ce qui reste à remplir : les `⟨…⟩` des modèles
    (`grep -rn '⟨' CLAUDE.md README.md docs/`), en commençant par `CLAUDE.md` § *Projet* et
    le tableau de concrétisation de `docs/conventions.md`.
 
 ---
 
-## Règles communes aux quatre verbes
+## Règles communes à tous les verbes
 
 - **Aucun commit, aucun push**, ni dans ce projet ni dans le dépôt socle. Tu prépares, tu
   rapportes ; l'utilisateur relit et commite.

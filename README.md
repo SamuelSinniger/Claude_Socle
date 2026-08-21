@@ -10,6 +10,10 @@ Ce dépôt n'est pas un projet. Il **produit** ce qui est copié dans les projet
 git clone https://github.com/SamuelSinniger/Claude_Socle.git
 ```
 
+> **Pour démarrer un projet, va directement à [DEMARRER.md](DEMARRER.md)** — la marche à
+> suivre pas à pas, l'ordre dans lequel remplir le squelette, et les erreurs classiques.
+> Ce README-ci décrit la mécanique du socle.
+
 ## Ce qu'il contient
 
 ```
@@ -54,7 +58,9 @@ Les commandes essaient le clone local, puis clonent depuis l'URL s'il est absent
 
 | Commande | Effet |
 |---|---|
-| `/socle install <chemin-de-ce-dépôt>` | Poser le socle dans un projet neuf (n'écrase aucun fichier existant) |
+| `socle/outils/installer.ps1 -Projet <projet>` (PowerShell)<br>`sh socle/outils/installer.sh <projet>` (POSIX) | **Amorçage** — la seule étape qui ne passe pas par une commande, puisque `/socle` est lui-même distribué par le socle. Détecte projet vierge (socle + modèles) ou projet ayant ses propres règles (socle seul) |
+| `/socle install <chemin-de-ce-dépôt>` | Compléter l'installation d'un projet **neuf**. Sur un projet qui a ses propres règles, bascule de lui-même en `adopt` |
+| `/socle adopt <chemin-de-ce-dépôt>` | Faire entrer un projet **existant qui a déjà ses règles** : classement de chaque règle (déjà couverte / à promouvoir / plus stricte / spécifique / en contradiction), validation par l'utilisateur, puis installation |
 | `/socle check` | Version installée, retard éventuel, fichiers socle modifiés localement, dérogations mortes |
 | `/socle update` | Appliquer la version disponible **et créer les points de mise en conformité** que les nouvelles règles impliquent |
 | `/socle promote "<la règle>"` | Faire monter ici une règle découverte en travaillant sur un projet, puis lister les projets à mettre à jour |

@@ -1,5 +1,5 @@
 {
-  "version": "1.1.0",
+  "version": "1.2.0",
   "date": "2026-08-22",
   "depot": "https://github.com/SamuelSinniger/Claude_Socle.git",
   "clone_local": "F:/Claude-Socle",
@@ -16,7 +16,7 @@
     { "source": "socle/commandes/detail.md", "destination": ".claude/commands/detail.md", "sha256": "9526bee79d6da247" },
     { "source": "socle/commandes/interop.md", "destination": ".claude/commands/interop.md", "sha256": "da822cd810eb0501" },
     { "source": "socle/commandes/point.md", "destination": ".claude/commands/point.md", "sha256": "2be6f03c8071f690" },
-    { "source": "socle/commandes/socle.md", "destination": ".claude/commands/socle.md", "sha256": "c0b6ee5f652ee242" },
+    { "source": "socle/commandes/socle.md", "destination": ".claude/commands/socle.md", "sha256": "0cf117dc1f43d7a9" },
     { "source": "socle/commandes/update-docs.md", "destination": ".claude/commands/update-docs.md", "sha256": "a52478142662c221" },
     { "source": "socle/githooks/README.md", "destination": ".githooks/README.md", "sha256": "3811a288b115ede9" },
     { "source": "socle/githooks/post-commit", "destination": ".githooks/post-commit", "sha256": "be02c73ce15f3316" }
