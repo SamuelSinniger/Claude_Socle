@@ -1,0 +1,3 @@
+# Les empreintes de socle/socle.json sont calculées sur des fichiers en LF.
+# Une conversion CRLF au clone ferait échouer `/socle check` sur tout le socle.
+* text eol=lf

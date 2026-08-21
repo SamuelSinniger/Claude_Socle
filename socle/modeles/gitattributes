@@ -1,0 +1,7 @@
+# Tout ce qui est distribué par le socle doit rester en LF : les empreintes de
+# socle/socle.json sont calculées en LF, et une conversion CRLF ferait échouer
+# `/socle check` sur l'ensemble du socle. Idem pour les hooks, dont le shebang
+# casse en CRLF.
+socle/** text eol=lf
+.claude/** text eol=lf
+.githooks/** text eol=lf

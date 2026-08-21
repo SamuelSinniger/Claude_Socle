@@ -1,0 +1,113 @@
+#!/bin/sh
+# post-commit — declenche l'agent doc-updater quand le commit est un "gros changement".
+#
+# Installation :  git config core.hooksPath .githooks
+# Desactiver ponctuellement : mettre [skip-docs] dans le message de commit,
+#                             ou exporter DOC_UPDATER=off
+#
+# Reglages (git config) :
+#   docupdater.lines  seuil de lignes modifiees      (defaut 80)
+#   docupdater.files  seuil de fichiers modifies     (defaut 5)
+#   docupdater.cli    chemin du CLI claude           (defaut "claude" dans le PATH)
+#   docupdater.model  modele passe au CLI            (defaut : celui du CLI)
+#
+# Un hook post-commit ne peut pas faire echouer le commit : ce script sort toujours en 0.
+
+set -u
+ROOT=$(git rev-parse --show-toplevel) || exit 0
+cd "$ROOT" || exit 0
+
+LOG=".claude/doc-updater.log"
+PENDING=".claude/doc-updates-pending.log"
+mkdir -p .claude
+
+say() { printf '[doc-updater] %s\n' "$1"; }
+logline() { printf '%s %s\n' "$(git log -1 --pretty=%cI)" "$1" >> "$LOG"; }
+
+[ "${DOC_UPDATER:-on}" = "off" ] && exit 0
+
+SHA=$(git rev-parse --short HEAD)
+SUBJECT=$(git log -1 --pretty=%s)
+
+# --- garde-fous -------------------------------------------------------------
+
+# opt-out explicite dans le message
+if git log -1 --pretty=%B | grep -qi '\[skip-docs\]'; then
+    exit 0
+fi
+
+# commit de merge : le contenu a deja ete vu sur les branches
+if [ "$(git rev-list --parents -n 1 HEAD | wc -w)" -gt 2 ]; then
+    exit 0
+fi
+
+# commit produit par la mise a jour de doc elle-meme
+case "$SUBJECT" in
+    docs:*|docs\(*|"doc:"*) exit 0 ;;
+esac
+
+# --- mesure du changement ---------------------------------------------------
+
+NUMSTAT=$(git diff-tree --root --no-commit-id -r --numstat HEAD 2>/dev/null)
+[ -z "$NUMSTAT" ] && exit 0
+
+FILES=$(printf '%s\n' "$NUMSTAT" | grep -c .)
+LINES=$(printf '%s\n' "$NUMSTAT" | awk '{ a += ($1 ~ /^[0-9]+$/ ? $1 : 0); d += ($2 ~ /^[0-9]+$/ ? $2 : 0) } END { print a + d }')
+
+# fichiers non documentaires : si le commit ne touche que de la doc, rien a faire
+CODE_FILES=$(printf '%s\n' "$NUMSTAT" | awk '{ print $3 }' \
+    | grep -viE '\.(md|mdx|rst|txt|adoc)$' \
+    | grep -viE '(^|/)(docs?|CHANGELOG.*|LICENSE.*)(/|$)' \
+    | grep -vE '^\.claude/doc-(updater\.log|updates-pending\.log)$' \
+    | grep -c .)
+
+if [ "$CODE_FILES" -eq 0 ]; then
+    exit 0
+fi
+
+# fichiers "structurels" : leur seule presence suffit a declencher
+STRUCTURAL=$(printf '%s\n' "$NUMSTAT" | awk '{ print $3 }' | grep -icE \
+    '(^|/)(package\.json|pnpm-lock\.yaml|yarn\.lock|requirements.*\.txt|pyproject\.toml|poetry\.lock|Cargo\.toml|go\.mod|composer\.json|Gemfile|Dockerfile|docker-compose\.ya?ml|\.env\.example|Makefile|justfile|openapi\.ya?ml|schema\.(sql|prisma|graphql))$')
+
+LINES_MIN=$(git config --get docupdater.lines || echo 80)
+FILES_MIN=$(git config --get docupdater.files || echo 5)
+
+BIG=no
+[ "$LINES" -ge "$LINES_MIN" ] && BIG=yes
+[ "$CODE_FILES" -ge "$FILES_MIN" ] && BIG=yes
+[ "$STRUCTURAL" -gt 0 ] && BIG=yes
+
+if [ "$BIG" = no ]; then
+    exit 0
+fi
+
+REASON="$LINES lignes / $CODE_FILES fichiers de code"
+[ "$STRUCTURAL" -gt 0 ] && REASON="$REASON / fichier structurel modifie"
+
+# --- execution --------------------------------------------------------------
+
+PROMPT="Utilise le sous-agent doc-updater pour mettre a jour la documentation du projet apres le commit $SHA (\"$SUBJECT\"). Plage a analyser : HEAD~1..HEAD (ou le commit racine s'il n'a pas de parent). Ne commite rien : laisse les modifications dans le working tree."
+
+CLI=$(git config --get docupdater.cli || echo "${CLAUDE_CLI:-claude}")
+
+if command -v "$CLI" >/dev/null 2>&1; then
+    MODEL=$(git config --get docupdater.model || echo "")
+    set -- -p "$PROMPT" --permission-mode acceptEdits
+    [ -n "$MODEL" ] && set -- "$@" --model "$MODEL"
+
+    say "commit $SHA : $REASON -> mise a jour de la doc en arriere-plan"
+    logline "run $SHA ($REASON)"
+    (
+        "$CLI" "$@" >> "$LOG" 2>&1
+        status=$?
+        printf '%s doc-updater exit=%s (commit %s)\n' "$(date -u +%FT%TZ)" "$status" "$SHA" >> "$LOG"
+    ) &
+    say "sortie : $LOG — relis ensuite avec: git diff"
+else
+    printf '%s %s %s\n' "$SHA" "$REASON" "$SUBJECT" >> "$PENDING"
+    say "commit $SHA : $REASON"
+    say "CLI '$CLI' introuvable — commit note dans $PENDING"
+    say "lance /update-docs dans Claude Code pour traiter la file"
+fi
+
+exit 0
