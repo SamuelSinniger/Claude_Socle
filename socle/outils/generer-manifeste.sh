@@ -36,16 +36,16 @@ entree() {
 # sur n'importe quelle machine, quand le clone local n'est pas au même endroit.
 DEPOT=$(git remote get-url origin 2>/dev/null || echo "")
 
-# Chemin du clone, en forme native pour la plateforme (sous Git Bash, `pwd` renvoie
-# /f/... que les autres outils Windows ne savent pas résoudre).
-CLONE_LOCAL=$(pwd -W 2>/dev/null || pwd)
+# Volontairement PAS de chemin local ici : le manifeste est commité et publié, un chemin
+# propre à une machine n'y a pas sa place (il serait faux partout ailleurs et polluerait
+# chaque diff). C'est l'installeur qui inscrit `clone_local` dans la copie du projet, où
+# l'information est vraie et utile.
 
 {
     printf '{\n'
     printf '  "version": "%s",\n' "$VERSION"
     printf '  "date": "%s",\n' "$DATE"
     printf '  "depot": "%s",\n' "$DEPOT"
-    printf '  "clone_local": "%s",\n' "$CLONE_LOCAL"
     printf '  "fichiers": [\n'
 
     first=1

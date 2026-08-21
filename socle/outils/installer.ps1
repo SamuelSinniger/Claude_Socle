@@ -6,7 +6,7 @@
 # La partie qui demande du jugement (réconcilier les règles d'un projet existant)
 # reste à /socle adopt, disponible dès que ce script a tourné.
 #
-#   .\socle\outils\installer.ps1 -Projet F:\chemin\du\projet [-Mode complet|socle-seul]
+#   .\socle\outils\installer.ps1 -Projet <chemin-du-projet> [-Mode complet|socle-seul]
 #
 # Modes :
 #   auto (défaut)  projet vierge -> complet ; projet avec ses propres règles -> socle seul
@@ -81,11 +81,16 @@ function Copier-Entree($entree, [bool]$siAbsent) {
 
 foreach ($f in $m.fichiers) { Copier-Entree $f $false }
 
-# Le manifeste lui-même : c'est lui qui dit au projet quelle version il a.
+# Le manifeste : c'est lui qui dit au projet quelle version il a. On y inscrit au passage
+# `clone_local`, le chemin du socle sur CETTE machine — information vraie ici, et qui n'a
+# rien à faire dans le manifeste publié.
 $dossierSocle = Join-Path $Projet 'socle'
 if (-not (Test-Path $dossierSocle)) { New-Item -ItemType Directory -Force -Path $dossierSocle | Out-Null }
-Copy-Item -Path $Manifeste -Destination (Join-Path $dossierSocle 'socle.json') -Force
-Write-Host "  pose     socle/socle.json"
+$cheminJson = $Socle -replace '\\', '/'
+$contenu = Get-Content $Manifeste -Raw
+$contenu = $contenu -replace '(?m)^(  "depot": .*)$', "`$1`n  ""clone_local"": ""$cheminJson"","
+Set-Content -Path (Join-Path $dossierSocle 'socle.json') -Value $contenu -Encoding utf8 -NoNewline
+Write-Host "  pose     socle/socle.json (clone_local = $Socle)"
 
 if ($copierModeles) {
     Write-Host ""

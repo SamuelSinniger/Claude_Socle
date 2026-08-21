@@ -92,10 +92,13 @@ entrees fichiers | while IFS='|' read -r src dst; do
     echo "  posé     $dst"
 done
 
-# le manifeste lui-même : c'est lui qui dit au projet quelle version il a
+# Le manifeste : c'est lui qui dit au projet quelle version il a. On y inscrit au passage
+# `clone_local`, le chemin du socle sur CETTE machine — information vraie ici, et qui n'a
+# rien à faire dans le manifeste publié.
 mkdir -p "$PROJET/socle"
-cp "$MANIFESTE" "$PROJET/socle/socle.json"
-echo "  posé     socle/socle.json"
+sed "s|^  \"depot\": \(.*\)$|  \"depot\": \1\n  \"clone_local\": \"$SOCLE\",|" \
+    "$MANIFESTE" > "$PROJET/socle/socle.json"
+echo "  posé     socle/socle.json (clone_local = $SOCLE)"
 
 if [ "$COPIER_MODELES" = oui ]; then
     echo

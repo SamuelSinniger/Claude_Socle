@@ -37,17 +37,28 @@ projet où le socle n'est pas installé. L'amorçage passe donc par un script, u
 En **PowerShell** (le terminal par défaut sous Windows) :
 
 ```powershell
-& F:\Claude-Socle\socle\outils\installer.ps1 -Projet F:\chemin\du\projet
+& <socle>\socle\outils\installer.ps1 -Projet <projet>
 ```
 
 En **shell POSIX** (Git Bash, macOS, Linux) :
 
 ```bash
-sh F:/Claude-Socle/socle/outils/installer.sh F:/chemin/du/projet
+sh <socle>/socle/outils/installer.sh <projet>
 ```
 
 Les deux scripts sont équivalents — même détection, mêmes copies, même sortie. `sh` n'étant
 pas dans le `PATH` de PowerShell, prends la version `.ps1` sous Windows.
+
+**Si PowerShell refuse d'exécuter le script** (« l'exécution de scripts est désactivée sur ce
+système ») — c'est la stratégie d'exécution par défaut de Windows. Contourne-la **pour ce
+seul appel**, sans rien changer sur la machine :
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File "<socle>\socle\outils\installer.ps1" -Projet "<projet>"
+```
+
+Le `sh` de Git n'y est pas soumis, c'est l'autre échappatoire :
+`& "C:\Program Files\Git\bin\sh.exe" "<socle>/socle/outils/installer.sh" "<projet>"`.
 
 Le script détecte le type de projet et adapte ce qu'il pose :
 
@@ -69,13 +80,25 @@ Ce que l'installation pose :
   commandes), `.githooks/` ;
 - copie les **19 modèles** — `CLAUDE.md`, `README.md`, `docs/**` — **uniquement là où le
   fichier n'existe pas déjà**, et seulement en mode complet ;
-- pose `socle/socle.json`, qui dit au projet quelle version il a.
+- pose `socle/socle.json`, qui dit au projet quelle version il a — et où trouver le socle sur
+  cette machine (`clone_local`, inscrit à l'installation ; le manifeste publié, lui, ne
+  contient aucun chemin local).
 
 Si le hook n'a pas pu être activé (projet sans dépôt git au moment de l'amorçage) :
 
 ```bash
 git config core.hooksPath .githooks
 ```
+
+### ⚠️ Relancer la session Claude Code
+
+**Les commandes et les agents sont découverts au démarrage de la session.** Une session
+ouverte *avant* l'amorçage ne verra ni `/socle`, ni `/point`, ni les cinq agents — et
+répondra que la commande n'existe pas alors que les fichiers sont bien là.
+
+Ferme et rouvre la session dans le projet après l'amorçage. Et note que ces commandes
+n'existent **que dans un projet** : le dépôt socle lui-même n'a pas de `.claude/`, ses
+commandes vivent dans `socle/commandes/`, d'où elles sont distribuées.
 
 ## 3. Remplir le squelette — dans cet ordre
 
@@ -149,11 +172,29 @@ de trancher ? `/detail P-00X`.
 ```
 
 Attendu : version installée = version disponible, aucun fichier socle modifié localement,
-aucune dérogation morte. Et rapidement :
+aucune dérogation morte.
 
-```bash
-git log --oneline -1 && ls socle .claude/agents .githooks
-```
+Si `/socle check` répond que la commande n'existe pas, ce n'est pas l'amorçage qui a échoué :
+**relance la session** (voir l'avertissement de l'étape 2), et assure-toi d'être dans le
+projet, pas dans le dépôt socle.
+
+Les quatre signes d'un amorçage réussi, vérifiables à la main :
+
+| Signe | Commande |
+|---|---|
+| Le manifeste est là, avec sa version | `cat socle/socle.json` (5 premières lignes) |
+| Les 5 agents et les 5 commandes | `ls .claude/agents .claude/commands` |
+| Le hook est branché | `git config --get core.hooksPath` → `.githooks` |
+| **La doc du projet est intacte** | `git status --short` → uniquement `.claude/`, `.githooks/`, `socle/` en non suivis, **aucun** fichier suivi modifié |
+
+Attention au faux positif sur le dernier point : tester la simple *présence* de `CLAUDE.md`
+ou `docs/api.md` ne prouve rien sur un projet existant — ce sont ses propres fichiers. La
+preuve qu'aucun modèle n'a été copié, c'est que les modèles qu'il ne possédait **pas**
+(`docs/suivi/*`, `docs/normes/_index.md`) sont toujours absents, et que `git diff` sur la doc
+ne renvoie rien.
+
+Enfin, les dossiers posés sont **non suivis** : pense à les commiter, sinon le socle disparaît
+au prochain clone.
 
 ## Les cinq erreurs classiques
 

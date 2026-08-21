@@ -1,8 +1,7 @@
 {
-  "version": "1.2.0",
+  "version": "1.2.1",
   "date": "2026-08-22",
   "depot": "https://github.com/SamuelSinniger/Claude_Socle.git",
-  "clone_local": "F:/Claude-Socle",
   "fichiers": [
     { "source": "socle/regles-communes.md", "destination": "socle/regles-communes.md", "sha256": "04f77e6e31e887f7" },
     { "source": "socle/normes-format.md", "destination": "socle/normes-format.md", "sha256": "b83ffbaff8d74ec5" },

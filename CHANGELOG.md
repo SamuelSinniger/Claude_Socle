@@ -17,6 +17,23 @@ décider s'il faut créer un point : écrire « aucun » est une réponse valabl
 
 ---
 
+## 1.2.1 — 2026-08-22
+
+### Corrigé
+
+- Le manifeste publié ne contient **plus de chemin local** : `clone_local` pointait sur la
+  machine de génération (`F:/Claude-Socle`), donc faux sur tout autre poste et bruyant dans
+  chaque diff. `depot` (l'URL) appartient au dépôt, `clone_local` appartient à
+  l'installation : ce sont désormais les installeurs qui l'inscrivent dans la copie du
+  projet, où l'information est vraie.
+  *Impact rétroactif : aucun — un projet déjà amorcé garde un `clone_local` valide.*
+- `DEMARRER.md` : exemples de commandes en `<socle>` / `<projet>` au lieu d'un chemin de
+  machine, et ajout des trois obstacles rencontrés à l'amorçage — `sh` absent du `PATH`
+  PowerShell, stratégie d'exécution qui bloque les `.ps1`, et **session à relancer** pour que
+  les commandes et les agents soient découverts.
+
+---
+
 ## 1.2.0 — 2026-08-22
 
 Adoption d'un projet qui a **déjà** ses propres règles.
