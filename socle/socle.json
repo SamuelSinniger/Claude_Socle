@@ -1,12 +1,13 @@
 {
-  "version": "1.5.1",
+  "version": "1.6.0",
   "date": "2026-08-24",
   "depot": "https://github.com/SamuelSinniger/Claude_Socle.git",
   "fichiers": [
-    { "source": "socle/regles-communes.md", "destination": "socle/regles-communes.md", "sha256": "6ab90b4b9355dc90" },
+    { "source": "socle/regles-communes.md", "destination": "socle/regles-communes.md", "sha256": "d72e720c7879cd74" },
     { "source": "socle/normes-format.md", "destination": "socle/normes-format.md", "sha256": "b83ffbaff8d74ec5" },
     { "source": "socle/guide-doc.md", "destination": "socle/guide-doc.md", "sha256": "4268cc2a6d22e37f" },
-    { "source": "socle/suivi-contrat.md", "destination": "socle/suivi-contrat.md", "sha256": "4fb24623f21ae458" },
+    { "source": "socle/suivi-contrat.md", "destination": "socle/suivi-contrat.md", "sha256": "96f468d9dca7bfb2" },
+    { "source": "socle/normes-internationales.md", "destination": "socle/normes-internationales.md", "sha256": "e8f339af848d7a0c" },
     { "source": "socle/agents/chef-de-projet.md", "destination": ".claude/agents/chef-de-projet.md", "sha256": "17f97a57d2fd9a02" },
     { "source": "socle/agents/developpeur.md", "destination": ".claude/agents/developpeur.md", "sha256": "993024fc0881ca06" },
     { "source": "socle/agents/doc-updater.md", "destination": ".claude/agents/doc-updater.md", "sha256": "fa04e5f12e295b05" },
@@ -18,12 +19,13 @@
     { "source": "socle/commandes/point.md", "destination": ".claude/commands/point.md", "sha256": "2be6f03c8071f690" },
     { "source": "socle/commandes/recap.md", "destination": ".claude/commands/recap.md", "sha256": "08db989a0afd3811" },
     { "source": "socle/commandes/socle.md", "destination": ".claude/commands/socle.md", "sha256": "4595b5c2d13760a4" },
+    { "source": "socle/commandes/standards.md", "destination": ".claude/commands/standards.md", "sha256": "2dc3ef3ccb84307d" },
     { "source": "socle/commandes/update-docs.md", "destination": ".claude/commands/update-docs.md", "sha256": "efef9aacef449a78" },
     { "source": "socle/githooks/README.md", "destination": ".githooks/README.md", "sha256": "d4afccd9adff6c65" },
     { "source": "socle/githooks/post-commit", "destination": ".githooks/post-commit", "sha256": "56627647703cfa2a" }
   ],
   "modeles": [
-    { "source": "socle/modeles/CLAUDE.md", "destination": "CLAUDE.md", "sha256": "2979d7e45cb6a5c1" },
+    { "source": "socle/modeles/CLAUDE.md", "destination": "CLAUDE.md", "sha256": "9f859d5d1273f9d6" },
     { "source": "socle/modeles/README.md", "destination": "README.md", "sha256": "5593a0ef5a167912" },
     { "source": "socle/modeles/docs/_TEMPLATE-domaine.md", "destination": "docs/_TEMPLATE-domaine.md", "sha256": "08a4bf76e4ebf26e" },
     { "source": "socle/modeles/docs/api.md", "destination": "docs/api.md", "sha256": "e4724fc027d7d7a7" },

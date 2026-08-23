@@ -64,6 +64,7 @@ pousse, jamais : le `push` appartient à l'utilisateur.
 | `/point [demande]` | Parler au `chef-de-projet` dans la conversation : ajouter, cadrer, démarrer, faire avancer un point. Sans argument : état des lieux. |
 | `/detail [P-### ou question]` | **Dossier technique** avant de trancher : état du code, options avec effort/risque/réversibilité, point de non-retour, recommandation. Lecture seule. |
 | `/update-docs [plage git]` | Réveiller `doc-updater` à la main. |
+| `/standards [list \| check]` | Les **normes internationales** applicables à ce projet (`R-130`, `R-131`) : lesquelles concernent ses champs, où les formats s'en écartent, et les points de mise en conformité qui en découlent. |
 | `/explique <sujet ou @fichier>` | Comprendre un concept, une commande, un bout de code : tableau, exemple minimal, pièges courants. Lecture seule, hors pipeline. |
 | `/recap` | Récapitulatif de la **session** : ce qui est fait, ce qui reste en suspens, les prochaines étapes. À ne pas confondre avec `/point` sans argument, qui donne l'état du **pipeline**. |
 

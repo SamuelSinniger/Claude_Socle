@@ -17,6 +17,46 @@ décider s'il faut créer un point : écrire « aucun » est une réponse valabl
 
 ---
 
+## 1.6.0 — 2026-08-24
+
+### Ajouté
+
+- **[`socle/normes-internationales.md`](socle/normes-internationales.md)** — catalogue des
+  normes à respecter dans la création de champs : géographie, dates et fuseaux, unités,
+  monnaies, identifiants d'entreprise, encodages et formats d'échange, accessibilité, plus
+  des sections sectorielles (édition, logistique, agroalimentaire, matières dangereuses,
+  économie circulaire). Fichier **distribué** : il arrive dans chaque projet et s'y lit, il
+  ne s'y modifie pas. Il porte son propre guide de contribution — qui s'applique **dans le
+  dépôt socle**.
+
+- **R-130** — un champ dont le domaine est couvert par une norme du catalogue porte **le
+  format de cette norme**, en base, dans les échanges et dans l'interface.
+  *Impact rétroactif : **à auditer dans tout projet qui manipule des pays, des langues, des
+  dates, des devises ou des identifiants d'entreprise** — c'est-à-dire presque tous. Un champ
+  `pays VARCHAR(50)` contenant « France » est non conforme → point de mise en conformité. Le
+  coût réel n'est pas le changement de type, c'est la conversion des données existantes :
+  `/standards check` le dit avant de créer le point.*
+
+- **R-131** — un format maison qui s'écarte d'une norme applicable est accompagné d'un
+  **convertisseur bidirectionnel** documenté, et la raison de l'écart est consignée.
+  *Impact rétroactif : à auditer aussi. La règle n'interdit pas le format maison — elle
+  interdit le format maison **sans porte de sortie**. Un export sans import ne suffit pas :
+  la preuve est l'aller-retour (`R-043`).*
+
+- **`/standards [list | check]`** — la commande qui rend le catalogue exploitable.
+  `list` croise les champs du projet avec le catalogue et ne rend que **les normes qui le
+  concernent** — le recracher en entier n'aiderait personne. `check` confronte les formats
+  réels, cherche **le convertisseur avant de conclure**, classe les écarts, propose les
+  corrections **en un seul tableau** (`R-068`) avec trois voies par manquement — adopter le
+  format normalisé · écrire le convertisseur · écarter la norme et le motiver —, puis crée
+  **un point par norme** une fois la proposition validée.
+  Elle ne corrige rien elle-même : elle mesure et planifie, la correction passe par le
+  pipeline.
+  *Impact rétroactif : aucun en soi — c'est `R-130`/`R-131` qui portent la dette. Le socle
+  distribue 20 fichiers au lieu de 18.*
+
+---
+
 ## 1.5.1 — 2026-08-24
 
 ### Corrigé

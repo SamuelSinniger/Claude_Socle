@@ -24,7 +24,7 @@ packages et leur rôle.⟩
   code pas) · [`developpeur`](.claude/agents/developpeur.md) · [`normes`](.claude/agents/normes.md)
   (conformité avant test) · [`testeur`](.claude/agents/testeur.md) (valide et commite) ·
   [`doc-updater`](.claude/agents/doc-updater.md). Commandes : `/point`, `/detail`,
-  `/update-docs`, `/socle`, `/interop`, `/explique`, `/recap`.
+  `/update-docs`, `/socle`, `/interop`, `/standards`, `/explique`, `/recap`.
 - Registre d'interopérabilité partagé (`interop.md` du dépôt socle) : le **lexique des
   concepts** `C-XXX` et ce que chaque projet sait exporter/importer. `/interop check` dit si
   un autre projet exporte déjà une donnée qu'on saisit à la main ici.

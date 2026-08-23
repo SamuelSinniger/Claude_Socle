@@ -28,7 +28,8 @@ socle/
 ├── guide-doc.md          règles du dossier docs/ et frontière socle / projet
 ├── normes-format.md      comment s'écrit une règle opposable
 ├── agents/               les 5 agents           → .claude/agents/ dans un projet
-├── commandes/            les 7 commandes        → .claude/commands/
+├── commandes/            les 8 commandes        → .claude/commands/
+├── normes-internationales.md  catalogue des standards (codes pays, dates, unités, formats…)
 ├── githooks/             post-commit + notice   → .githooks/
 ├── modeles/              squelette d'un projet neuf (copié à l'installation SEULEMENT)
 └── outils/               amorceur (à déposer dans un projet), installeurs, générateur de manifeste

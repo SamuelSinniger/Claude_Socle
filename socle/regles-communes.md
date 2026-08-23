@@ -232,3 +232,28 @@ stack.
   textuelle ; puis désérialisation par un consommateur configuré par défaut, sans convertisseur
   ajouté à la main.
   **Exception** : aucune.
+
+## Normes internationales
+
+> Le catalogue est dans [normes-internationales.md](normes-internationales.md) : codes pays,
+> dates, unités, monnaies, identifiants d'entreprise, encodages, formats d'échange, normes
+> sectorielles. `/standards` dit lesquelles s'appliquent à un projet et contrôle les écarts.
+
+- **R-130** — Un champ dont le domaine est couvert par une norme de
+  [normes-internationales.md](normes-internationales.md) porte **le format de cette norme** —
+  en base, dans les échanges et dans l'interface. Inventer un code pays à trois lettres quand
+  `ISO 3166-1` existe coûte deux fois : à l'écriture, puis le jour où il faut échanger.
+  **Vérifiable par** : pour chaque champ du modèle de données, chercher son domaine dans le
+  catalogue ; si une norme le couvre, comparer le type, la longueur et un échantillon de
+  valeurs au format qu'elle impose.
+  **Exception** : un format maison est admis **s'il est accompagné d'un convertisseur**
+  (`R-131`) — jamais seul.
+
+- **R-131** — Un format maison qui s'écarte d'une norme applicable est accompagné d'un
+  **convertisseur bidirectionnel** — du maison vers le standard **et** l'inverse — exposé
+  comme surface d'interopérabilité (`R-046`) et documenté avec le format
+  (`R-051`). La **raison de l'écart** est consignée dans `docs/decisions-prises.md`.
+  Sans convertisseur, l'écart n'est pas un choix : c'est une donnée captive.
+  **Vérifiable par** : l'aller-retour, comme pour tout export (`R-043`) — convertir vers le
+  standard, réimporter, comparer.
+  **Exception** : aucune.

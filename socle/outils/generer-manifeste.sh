@@ -49,7 +49,7 @@ DEPOT=$(git remote get-url origin 2>/dev/null || echo "")
     printf '  "fichiers": [\n'
 
     first=1
-    for f in socle/regles-communes.md socle/normes-format.md socle/guide-doc.md socle/suivi-contrat.md; do
+    for f in socle/regles-communes.md socle/normes-format.md socle/guide-doc.md socle/suivi-contrat.md socle/normes-internationales.md; do
         [ -f "$f" ] || continue
         [ $first -eq 1 ] || printf ',\n'; first=0
         entree "$f" "$f"

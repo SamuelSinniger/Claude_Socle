@@ -80,20 +80,20 @@ L'installeur détecte le type de projet et adapte ce qu'il pose :
 
 | Projet | Ce qui est copié | Suite |
 |---|---|---|
-| **vierge** | les 18 fichiers distribués **+ les modèles** là où le fichier est absent | `/socle install` (étape 3), puis remplir le squelette |
-| **existant, avec ses propres règles** | **uniquement** les 18 fichiers distribués — aucun modèle, `CLAUDE.md` et `docs/` intacts | `/socle install` (étape 3), qui bascule en `adopt` et réconcilie les règles avec ta validation |
+| **vierge** | les 20 fichiers distribués **+ les modèles** là où le fichier est absent | `/socle install` (étape 3), puis remplir le squelette |
+| **existant, avec ses propres règles** | **uniquement** les 20 fichiers distribués — aucun modèle, `CLAUDE.md` et `docs/` intacts | `/socle install` (étape 3), qui bascule en `adopt` et réconcilie les règles avec ta validation |
 
 Il active aussi le hook (`core.hooksPath`) et t'affiche la marche à suivre. Si la détection
 se trompe, force-la : `-Mode complet` / `-Mode socle-seul` en PowerShell, `--complet` /
 `--socle-seul` en POSIX — les deux amorceurs passent l'option à l'installeur.
 
-À partir de là, `/socle` et les sept commandes existent dans le projet : tout le reste passe
+À partir de là, `/socle` et les huit commandes existent dans le projet : tout le reste passe
 par elles — à commencer par `/socle install`, qui **termine** l'installation (étape 3).
 
 Ce que l'installation pose :
 
-- copie les **18 fichiers synchronisés** — `socle/` (règles communes, contrat de suivi, guide
-  doc, format des normes), `.claude/agents/` (les 5 agents), `.claude/commands/` (les 7
+- copie les **20 fichiers synchronisés** — `socle/` (règles communes, contrat de suivi, guide
+  doc, format des normes), `.claude/agents/` (les 5 agents), `.claude/commands/` (les 8
   commandes), `.githooks/` ;
 - copie les **19 modèles** — `CLAUDE.md`, `README.md`, `docs/**` — **uniquement là où le
   fichier n'existe pas déjà**, et seulement en mode complet ;
@@ -219,7 +219,7 @@ Les quatre signes d'un amorçage réussi, vérifiables à la main :
 | Signe | Commande |
 |---|---|
 | Le manifeste est là, avec sa version | `cat socle/socle.json` (5 premières lignes) |
-| Les 5 agents et les 7 commandes | `ls .claude/agents .claude/commands` |
+| Les 5 agents et les 8 commandes | `ls .claude/agents .claude/commands` |
 | Le hook est branché | `git config --get core.hooksPath` → `.githooks` |
 | **La doc du projet est intacte** | `git status --short` → uniquement `.claude/`, `.githooks/`, `socle/` en non suivis, **aucun** fichier suivi modifié |
 
