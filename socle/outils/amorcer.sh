@@ -9,10 +9,14 @@
 #   sh amorcer.sh                     depuis le dossier du projet
 #   sh amorcer.sh --projet <chemin>   depuis ailleurs
 #
+# Une fois l'installation faite, il **s'efface** : déposé dans le projet, il n'a rien à y
+# faire ensuite — ni en fichier non suivi qui traîne, ni commité par mégarde.
+#
 # Options :
 #   --socle <chemin>   forcer l'emplacement du dépôt socle (sinon : recherche puis clone)
 #   --complet | --socle-seul   forcer ce que pose l'installeur (sinon : détection)
 #   --oui              ne rien demander (clone, git init) : répondre oui à tout
+#   --garder           ne pas s'effacer à la fin (pour amorcer plusieurs projets de suite)
 
 set -eu
 
@@ -23,6 +27,7 @@ PROJET=''
 SOCLE=''
 MODE=auto
 OUI=non
+GARDER=non
 
 while [ $# -gt 0 ]; do
     case "$1" in
@@ -30,6 +35,7 @@ while [ $# -gt 0 ]; do
         --socle)  SOCLE=${2:-};  shift 2 ;;
         --complet|--socle-seul) MODE=$1; shift ;;
         --oui|-y) OUI=oui; shift ;;
+        --garder) GARDER=oui; shift ;;
         *) echo "option inconnue : $1" >&2; exit 2 ;;
     esac
 done
@@ -145,7 +151,19 @@ fi
 
 # --- 5. la suite ----------------------------------------------------------------
 
-if [ -f "$0" ] && [ "$(natif "$(dirname "$0")")" = "$PROJET" ]; then
+# L'amorceur se retire du projet : il n'a de raison d'être qu'une fois. Supprimer un
+# script pendant qu'il tourne est sans danger — le shell garde son descripteur ouvert
+# jusqu'à la fin. Deux réserves : on ne s'efface que depuis le projet où l'on a été
+# déposé (pas depuis une boîte à outils lancée avec --projet), et jamais un fichier que
+# git suit déjà, sous peine de fabriquer une suppression à commiter.
+if [ "$GARDER" = non ] && [ -f "$0" ] && [ "$(natif "$(dirname "$0")")" = "$PROJET" ]; then
+    MOI=$(basename "$0")
     echo
-    echo "  Ce fichier a fait son travail, tu peux le supprimer : $(basename "$0")"
+    if git -C "$PROJET" ls-files --error-unmatch "$MOI" >/dev/null 2>&1; then
+        echo "[!] $MOI est suivi par git dans ce projet : je ne le supprime pas."
+        echo "    Retire-le toi-même (git rm --cached $MOI) — il n'a rien à faire dans"
+        echo "    l'historique du projet."
+    else
+        rm -f "$0" && echo "  $MOI s'est effacé : il avait fait son travail."
+    fi
 fi

@@ -11,16 +11,21 @@
 # Si PowerShell refuse d'exécuter le fichier (stratégie d'exécution par défaut) :
 #   powershell -NoProfile -ExecutionPolicy Bypass -File .\amorcer.ps1
 #
+# Une fois l'installation faite, il s'efface : déposé dans le projet, il n'a rien à y
+# faire ensuite — ni en fichier non suivi qui traîne, ni commité par mégarde.
+#
 # Options :
 #   -Socle <chemin>   forcer l'emplacement du dépôt socle (sinon : recherche puis clone)
 #   -Mode complet|socle-seul   forcer ce que pose l'installeur (sinon : détection)
 #   -Oui              ne rien demander (clone, git init) : répondre oui à tout
+#   -Garder           ne pas s'effacer à la fin (pour amorcer plusieurs projets de suite)
 
 param(
     [string]$Projet,
     [string]$Socle,
     [ValidateSet('auto', 'complet', 'socle-seul')][string]$Mode = 'auto',
-    [switch]$Oui
+    [switch]$Oui,
+    [switch]$Garder
 )
 
 $ErrorActionPreference = 'Stop'
@@ -134,7 +139,24 @@ Write-Host ""
 
 # --- 5. la suite ----------------------------------------------------------------
 
-if ($PSCommandPath -and (Split-Path $PSCommandPath -Parent) -eq $Projet) {
+# L'amorceur se retire du projet : il n'a de raison d'etre qu'une fois. PowerShell a lu
+# tout le fichier avant de l'executer, le supprimer ici ne coupe rien. Deux reserves :
+# on ne s'efface que depuis le projet ou l'on a ete depose (pas depuis une boite a outils
+# lancee avec -Projet), et jamais un fichier que git suit deja, sous peine de fabriquer
+# une suppression a commiter.
+if (-not $Garder -and $PSCommandPath -and (Split-Path $PSCommandPath -Parent) -eq $Projet) {
+    $moi = Split-Path $PSCommandPath -Leaf
     Write-Host ""
-    Write-Host "  Ce fichier a fait son travail, tu peux le supprimer : $(Split-Path $PSCommandPath -Leaf)"
+    # `ls-files <chemin>` sans --error-unmatch : il imprime le chemin s'il est suivi,
+    # rien sinon, et sort toujours en 0 — pas de stderr a rediriger, donc pas de
+    # NativeCommandError sous $ErrorActionPreference = 'Stop'.
+    $suivi = git -C $Projet ls-files $moi
+    if ($suivi) {
+        Write-Host "[!] $moi est suivi par git dans ce projet : je ne le supprime pas."
+        Write-Host "    Retire-le toi-meme (git rm --cached $moi) - il n'a rien a faire"
+        Write-Host "    dans l'historique du projet."
+    } else {
+        Remove-Item -LiteralPath $PSCommandPath -Force
+        Write-Host "  $moi s'est efface : il avait fait son travail."
+    }
 }

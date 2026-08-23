@@ -72,6 +72,11 @@ L'amorçage tient désormais en **un fichier déposé dans le dossier du projet*
   un dépôt, puis passe la main à `installer.ps1`/`installer.sh`.
   L'amorceur ne copie rien lui-même : la mécanique reste dans l'installeur, qui lit le
   manifeste. Une seule source de vérité, et un amorceur qui ne vieillit pas avec le socle.
+  **Il s'efface une fois l'installation faite** — il n'a de raison d'être qu'une fois, et un
+  fichier d'amorçage qui reste finit non suivi dans un coin, ou commité dans le projet (c'est
+  arrivé sur Quizzeur). Il ne s'efface pas s'il a été lancé depuis ailleurs (`--projet`), ni
+  si git le suit déjà : dans ce dernier cas il le dit, plutôt que de fabriquer une suppression
+  à commiter. `--garder` / `-Garder` pour amorcer plusieurs projets avec le même fichier.
   *Impact rétroactif : aucun — les installeurs sont inchangés, un projet déjà amorcé n'a rien
   à faire. Le prérequis « cloner le socle une fois par machine » disparaît de la marche à
   suivre : le fichier déposé s'en charge.*

@@ -26,8 +26,11 @@ Sans argument : il se sait dans le projet. Ce qu'il fait, dans l'ordre —
 3. `git init -b main` si le projet n'est pas encore un dépôt (il le propose) ;
 4. **passe la main à l'installeur** du socle, qui fait la copie selon le manifeste.
 
-Il ne demande rien avec `-Oui` / `--oui`. Une fois qu'il a tourné, le fichier ne sert plus à
-rien : supprime-le, il n'a pas à être commité dans le projet.
+Il ne demande rien avec `-Oui` / `--oui`. Et **il s'efface tout seul** une fois l'installation
+faite : il n'a de raison d'être qu'une fois, et n'a rien à faire dans l'historique du projet.
+Deux réserves — il ne s'efface pas s'il a été lancé depuis ailleurs (`-Projet` / `--projet`),
+et pas non plus si git le suit déjà : il le dit alors plutôt que de fabriquer une suppression
+à commiter. `-Garder` / `--garder` pour amorcer plusieurs projets avec le même fichier.
 
 **Si PowerShell refuse d'exécuter le fichier** (« l'exécution de scripts est désactivée sur ce
 système ») — c'est la stratégie d'exécution par défaut de Windows. Contourne-la **pour ce
