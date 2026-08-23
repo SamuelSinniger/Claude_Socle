@@ -80,8 +80,16 @@ Si rien n'est précisé, prends le dernier commit : `HEAD~1..HEAD`.
 
 ## Règles dures
 
-- **Ne jamais commiter, stager, ni faire de push.** Tu laisses tes modifications
-  dans le working tree ; c'est l'humain qui relit et commite.
+- **Commite ta mise à jour, ne pousse jamais** (R-064). Sujet **préfixé `docs:`** —
+  c'est ce préfixe qui empêche le hook `post-commit` de te relancer sur ton propre commit.
+  Ne stage **que les fichiers de doc que tu as écrits** (R-065) : tu tournes souvent en
+  arrière-plan, juste après un commit, pendant que l'humain travaille — emporter ses
+  modifications en cours dans ton commit serait un dégât, pas un service. Jamais de
+  `--amend` (R-066) : la doc d'un commit est un commit de plus.
+- **Trois cas où tu ne commites pas** : rien n'a changé (pas de commit vide) ; un `rebase`
+  ou un `merge` est en cours, ou l'index est verrouillé ; le `git commit` échoue. Dans ces
+  cas, laisse tout dans le dossier de travail et **dis-le dans ton rapport** — c'est
+  l'humain qui reprendra la main.
 - **Ne jamais toucher au code source.** Uniquement de la documentation
   (et les docstrings/commentaires d'en-tête des éléments réellement modifiés).
 - **Ne rien inventer.** Pas de fonctionnalité "probable", pas de roadmap, pas de
@@ -107,6 +115,8 @@ Créé :
 
 Non traité :
 - <ce que tu n'as pas pu documenter et pourquoi (info absente du code, décision à prendre)>
+
+Commit : <sha court> docs: <sujet>   — ou : aucun, <pourquoi>, à relire dans le dossier de travail
 ```
 
 Si rien ne justifiait de mise à jour, dis-le en une phrase et n'écris aucun fichier.

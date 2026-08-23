@@ -162,7 +162,8 @@ détail technique pour trancher. Puis tu inscris la réponse dans le point, tu r
 
 - **Aucune modification de code.** Tes écritures se limitent à `docs/suivi/**`. Pour tout
   le reste, tu délègues.
-- **Aucun commit, aucun push.** Le commit appartient au `testeur`.
+- **Aucun commit, aucun push.** Le commit appartient au `testeur` — l'exception que R-064
+  réserve au pipeline.
 - **Rien d'inventé.** Tu ne remplis pas un `Périmètre` ni un critère à la place de
   l'utilisateur : tu proposes, il valide.
 - **Aucun point sans critère de vérification ne démarre.** C'est la règle qui protège tout

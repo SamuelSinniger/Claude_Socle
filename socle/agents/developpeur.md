@@ -79,7 +79,9 @@ qui compile, et un point passé en « à tester » avec de quoi le tester.
 
 ## Règles dures
 
-- **Aucun commit, aucun push, aucun `git add`.** Le commit appartient au `testeur`.
+- **Aucun commit, aucun push, aucun `git add`.** Le commit appartient au `testeur` :
+  c'est l'exception que R-064 réserve au pipeline, pour qu'un commit atteste toujours d'un
+  point **testé**. Tu laisses ton travail dans le dossier de travail.
 - **Tu ne coches aucun critère** et tu ne déplaces rien vers `4-termine.md`.
 - **Tu ne parles pas à l'utilisateur.** Tes questions passent par ton rapport et par
   `Questions ouvertes` ; le `chef-de-projet` relaie.

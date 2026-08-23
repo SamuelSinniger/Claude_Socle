@@ -16,9 +16,12 @@ Procédure :
    analyse `<sha>~1..HEAD`.
 3. Sinon, utilise `HEAD~1..HEAD`.
 
-Délègue ensuite au sous-agent `doc-updater` avec cette plage. Il ne doit rien commiter.
+Délègue ensuite au sous-agent `doc-updater` avec cette plage.
 
 Quand il a terminé :
 - vide `.claude/doc-updates-pending.log` si tu as traité la file,
 - affiche son rapport,
-- rappelle à l'utilisateur de relire avec `git diff` avant de commiter.
+- **commite sa mise à jour** (R-064) — sujet préfixé `docs:`, ce qui empêche le hook
+  `post-commit` de relancer `doc-updater` sur son propre commit —, en ne stageant que les
+  fichiers de doc qu'il a écrits (R-065). S'il n'a rien touché, pas de commit vide,
+- rappelle à l'utilisateur de relire (`git show HEAD`) : c'est lui qui pousse.

@@ -50,6 +50,13 @@ fonctionnel (`testeur`). Le contrôle passe **d'abord** — inutile de tester du
 Le `chef-de-projet` est le **seul** en contact avec l'utilisateur. Les deux autres lui
 remontent leurs questions ; il relaie.
 
+**Le commit d'un point appartient au `testeur`**, et à lui seul : c'est l'exception que
+[R-064](regles-communes.md) réserve au pipeline. Ailleurs — mise à jour de doc, installation
+ou mise à jour du socle, déclaration d'interop — l'agent qui écrit commite ce qu'il a écrit.
+Ici non : un point donne **un** commit, celui qui atteste qu'il est validé. Un `developpeur`
+qui commiterait son travail livrerait du code non testé sous couvert d'un commit. Personne ne
+pousse, jamais : le `push` appartient à l'utilisateur.
+
 ### Commandes
 
 | Commande | Usage |

@@ -4,71 +4,85 @@ Marche à suivre pour un projet **neuf**. Pour un projet **existant qui a déjà
 c'est le même point de départ : `/socle install` détecte les règles préexistantes et bascule
 de lui-même en `adopt` (réconciliation des règles avant installation).
 
-## 0. Une fois par machine
-
-Cloner le socle **à côté** des projets, jamais dans l'un d'eux :
-
-```bash
-git clone https://github.com/SamuelSinniger/Claude_Socle.git
-```
-
-Optionnel mais recommandé — le CLI Claude Code, sans lequel le hook `post-commit` ne peut pas
-réveiller `doc-updater` tout seul (il note alors les commits en attente, à traiter avec
-`/update-docs`) :
-
-```bash
-npm install -g @anthropic-ai/claude-code
-```
-
-## 1. Créer le dépôt du projet
-
-```bash
-git init -b main
-```
-
-Un dépôt git n'est pas facultatif : le hook de documentation, le contrôle de conformité
-(qui lit le **diff** d'un point) et le commit du `testeur` en dépendent.
-
-## 2. Amorcer le socle — avec le script, pas avec `/socle`
+## 1. Amorcer — un fichier déposé dans le dossier du projet
 
 ⚠️ **La commande `/socle` est distribuée *par* le socle** : elle n'existe pas encore dans un
 projet où le socle n'est pas installé. L'amorçage passe donc par un script, une fois.
 
-En **PowerShell** (le terminal par défaut sous Windows) :
+Un seul fichier à récupérer et à déposer **à la racine du projet** — neuf ou existant :
+
+| Système | Fichier | Lancement |
+|---|---|---|
+| Windows | [`amorcer.ps1`](socle/outils/amorcer.ps1) | `.\amorcer.ps1` |
+| macOS, Linux, Git Bash | [`amorcer.sh`](socle/outils/amorcer.sh) | `sh amorcer.sh` |
+
+Sans argument : il se sait dans le projet. Ce qu'il fait, dans l'ordre —
+
+1. **trouve le dépôt socle** sur la machine (`-Socle`/`--socle` s'il est ailleurs, la
+   variable `CLAUDE_SOCLE`, le voisin `Claude_Socle` du projet, le dossier personnel) ;
+2. **le clone à côté du projet** s'il ne le trouve pas, jamais dedans, après confirmation ;
+   sinon **récupère l'amont** — installer depuis un clone en retard de trois versions
+   installerait un socle périmé ;
+3. `git init -b main` si le projet n'est pas encore un dépôt (il le propose) ;
+4. **passe la main à l'installeur** du socle, qui fait la copie selon le manifeste.
+
+Il ne demande rien avec `-Oui` / `--oui`. Une fois qu'il a tourné, le fichier ne sert plus à
+rien : supprime-le, il n'a pas à être commité dans le projet.
+
+**Si PowerShell refuse d'exécuter le fichier** (« l'exécution de scripts est désactivée sur ce
+système ») — c'est la stratégie d'exécution par défaut de Windows. Contourne-la **pour ce
+seul appel**, sans rien changer sur la machine :
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\amorcer.ps1
+```
+
+**Sans même déposer de fichier**, si le dépôt est accessible depuis la machine — depuis le
+dossier du projet :
+
+```powershell
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/SamuelSinniger/Claude_Socle/main/socle/outils/amorcer.ps1)))
+```
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/SamuelSinniger/Claude_Socle/main/socle/outils/amorcer.sh | sh
+```
+
+**Si le clone du socle est déjà là**, l'amorceur ne sert à rien : appelle directement
+l'installeur, qui fait le même travail à partir du dépôt.
 
 ```powershell
 & <socle>\socle\outils\installer.ps1 -Projet <projet>
 ```
 
-En **shell POSIX** (Git Bash, macOS, Linux) :
-
 ```bash
 sh <socle>/socle/outils/installer.sh <projet>
 ```
 
-Les deux scripts sont équivalents — même détection, mêmes copies, même sortie. `sh` n'étant
-pas dans le `PATH` de PowerShell, prends la version `.ps1` sous Windows.
+Optionnel mais recommandé, une fois par machine — le CLI Claude Code, sans lequel le hook
+`post-commit` ne peut pas réveiller `doc-updater` tout seul (il note alors les commits en
+attente, à traiter avec `/update-docs`) :
 
-**Si PowerShell refuse d'exécuter le script** (« l'exécution de scripts est désactivée sur ce
-système ») — c'est la stratégie d'exécution par défaut de Windows. Contourne-la **pour ce
-seul appel**, sans rien changer sur la machine :
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File "<socle>\socle\outils\installer.ps1" -Projet "<projet>"
+```bash
+npm install -g @anthropic-ai/claude-code
 ```
 
-Le `sh` de Git n'y est pas soumis, c'est l'autre échappatoire :
-`& "C:\Program Files\Git\bin\sh.exe" "<socle>/socle/outils/installer.sh" "<projet>"`.
+## 2. Ce que l'amorçage pose
 
-Le script détecte le type de projet et adapte ce qu'il pose :
+Un dépôt git n'est pas facultatif : le hook de documentation, le contrôle de conformité
+(qui lit le **diff** d'un point) et le commit du `testeur` en dépendent. L'amorceur le crée
+si besoin.
+
+L'installeur détecte le type de projet et adapte ce qu'il pose :
 
 | Projet | Ce qui est copié | Suite |
 |---|---|---|
 | **vierge** | les 16 fichiers distribués **+ les modèles** là où le fichier est absent | `/socle check`, puis remplir le squelette |
 | **existant, avec ses propres règles** | **uniquement** les 16 fichiers distribués — aucun modèle, `CLAUDE.md` et `docs/` intacts | `/socle adopt <socle>`, qui réconcilie les règles avec ta validation |
 
-Il active aussi le hook (`core.hooksPath`) et t'affiche la marche à suivre. Forçable avec
-`--complet` ou `--socle-seul` si la détection se trompe.
+Il active aussi le hook (`core.hooksPath`) et t'affiche la marche à suivre. Si la détection
+se trompe, force-la : `-Mode complet` / `-Mode socle-seul` en PowerShell, `--complet` /
+`--socle-seul` en POSIX — les deux amorceurs passent l'option à l'installeur.
 
 À partir de là, `/socle` et les cinq commandes existent dans le projet : tout le reste passe
 par elles.

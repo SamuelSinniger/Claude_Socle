@@ -116,6 +116,16 @@ stack.
   sécurité, un risque de perte de données).
 - **R-063** — **Aucun point ne démarre sans critères de vérification observables** : ils
   sont le cahier des charges du test, donc la condition de sortie du backlog.
+- **R-064** — Un changement produit par un agent ou une commande est **commité par son
+  auteur**, avec un message qui dit ce qu'il a fait. Le `push` appartient à l'utilisateur —
+  un travail commité mais non poussé reste défaisable (`git reset`, `git revert`).
+  *Exception* : dans le pipeline `docs/suivi/`, le commit d'un point appartient au `testeur`
+  et à lui seul — un point validé donne un commit, et un seul.
+- **R-065** — Un agent ne stage **que les fichiers qu'il a lui-même écrits**
+  (`git add <chemins>`, jamais `-A` ni `.`). Les modifications en attente d'un autre auteur
+  restent dans le dossier de travail et sont signalées dans son rapport. *Exception* : aucune.
+- **R-066** — Un agent ne fait jamais de `--amend`, de `--no-verify`, ni de réécriture
+  d'historique : il ajoute un commit. *Exception* : aucune.
 
 ## Décisions
 

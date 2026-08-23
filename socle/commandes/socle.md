@@ -79,8 +79,11 @@ recommandée. Rien n'est modifié par `check`.
    Une mise à jour de socle qui ne produit aucun point alors qu'une règle a changé est
    suspecte : dis-le.
 5. Mettre à jour la ligne de ce projet dans le `projets.md` du dépôt socle (version, date).
-6. Ne **rien commiter** : laisser le tout dans le dossier de travail et lister à l'utilisateur
-   ce qu'il doit relire (`git diff`).
+6. **Commiter ce que tu as écrit** (R-064) : un commit dans le projet — les fichiers du socle
+   copiés, `socle/socle.json`, les points de mise en conformité créés —, un autre dans le
+   dépôt socle si tu y as touché `projets.md`. Message : `socle: mise à jour <version>`.
+   Ne stage que ces chemins-là (R-065), et dis à l'utilisateur ce qu'il doit relire
+   (`git show HEAD`) avant de pousser.
 
 ## `promote "<la règle>"` — faire monter une règle dans le socle
 
@@ -103,7 +106,10 @@ projet qu'on découvre les règles manquantes.
 5. Régénérer le manifeste : `sh socle/outils/generer-manifeste.sh <version> <AAAA-MM-JJ>`.
 6. Lister, depuis `projets.md`, les projets à mettre à jour — et rappeler que ce projet-ci
    doit lui aussi faire `/socle update` pour recevoir sa propre règle.
-7. Ne rien commiter, ni dans le socle ni ici.
+7. **Commiter dans le dépôt socle** (R-064) la règle, l'entrée de CHANGELOG et le manifeste
+   régénéré — les trois ensemble, jamais séparément : un manifeste sans sa règle est un
+   socle incohérent. Message : `socle <version> — <la règle en une ligne>`. Ne pousse pas :
+   c'est à l'utilisateur de le faire, après relecture de l'impact rétroactif annoncé.
 
 ## `adopt [chemin]` — faire entrer dans le socle un projet qui a déjà ses règles
 
@@ -151,6 +157,10 @@ regarderait pas : il poserait le socle à côté, laissant deux corps de règles
 
 6. Inscrire le projet dans `projets.md`, colonne dérogations remplie.
 
+7. **Commiter** (R-064), une fois le classement validé et appliqué : dans le projet,
+   `socle: adoption <version>` ; dans le dépôt socle, les règles promues et `projets.md`.
+   Rien avant l'étape 3 — tant que le classement n'est pas validé, il n'y a rien à commiter.
+
 ## `install [chemin]` — poser le socle dans un projet neuf
 
 1. **Détecter si le projet est réellement neuf**, avant toute copie. Chercher des règles
@@ -176,7 +186,10 @@ regarderait pas : il poserait le socle à côté, laissant deux corps de règles
    socle, et les agents ne le liront jamais : le socle serait installé et inerte.
 5. Activer le hook : `git config core.hooksPath .githooks`.
 6. Inscrire le projet dans le `projets.md` du dépôt socle.
-7. Dire à l'utilisateur ce qui reste à remplir : les `⟨…⟩` des modèles
+7. **Commiter** (R-064) : dans le projet, `socle: installation <version>` — sans quoi les
+   dossiers posés restent non suivis et le socle disparaît au prochain clone ; dans le dépôt
+   socle, la ligne ajoutée à `projets.md`. Pas de `push`.
+8. Dire à l'utilisateur ce qui reste à remplir : les `⟨…⟩` des modèles
    (`grep -rn '⟨' CLAUDE.md README.md docs/`), en commençant par `CLAUDE.md` § *Projet* et
    le tableau de concrétisation de `docs/conventions.md`.
 
@@ -184,8 +197,14 @@ regarderait pas : il poserait le socle à côté, laissant deux corps de règles
 
 ## Règles communes à tous les verbes
 
-- **Aucun commit, aucun push**, ni dans ce projet ni dans le dépôt socle. Tu prépares, tu
-  rapportes ; l'utilisateur relit et commite.
+- **Tu commites ton travail, tu ne pousses jamais** (R-064), ni dans ce projet ni dans le
+  dépôt socle. Ne stage que les chemins que tu as écrits (R-065) : une commande de socle qui
+  emporterait le travail en cours de l'utilisateur dans son commit est un accident, pas un
+  service. Si le dossier de travail contient des modifications qui ne sont pas à toi,
+  commite les tiennes et **dis-le** dans ton rapport. Jamais de `--amend` (R-066).
+- **Aucun commit tant qu'une décision est en attente.** `adopt` s'arrête sur le classement
+  des règles, `update` s'arrête sur un fichier socle modifié localement : à ces points-là,
+  rien n'est écrit, donc rien n'est commité.
 - **Aucune modification d'un fichier socle dans un projet**, dans aucun verbe. La seule
   écriture licite côté projet, hors copie : le `CLAUDE.md` (dérogations) et
   `docs/suivi/**` (points de mise en conformité).

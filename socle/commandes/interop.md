@@ -12,8 +12,10 @@ sur le nom d'entité : `Place`, `Lieu`, `POI` et `Spot` sont le même `C-LIEU`.
 
 Pour localiser le dépôt socle, suis la procédure de [`/socle`](socle.md) (argument →
 `clone_local` du manifeste → clone depuis `depot`), et **récupère l'amont** avant de lire le
-registre : un clone en retard donnerait des correspondances périmées. Ne rien commiter, ni
-ici ni dans le socle.
+registre : un clone en retard donnerait des correspondances périmées. Ce que tu écris, tu le
+commites (R-064) — la déclaration ou le concept dans le dépôt socle (`interop: <projet> —
+<ce qui change>`), les points créés ici — en ne stageant que ces chemins (R-065). Le `push`
+appartient à l'utilisateur : un registre poussé engage les autres projets.
 
 ---
 

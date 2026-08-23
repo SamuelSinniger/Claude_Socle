@@ -11,8 +11,14 @@ git config core.hooksPath .githooks
 
 Après chaque commit, mesure l'ampleur du changement. Si c'est un « gros changement »,
 il déclenche l'agent [`doc-updater`](../.claude/agents/doc-updater.md) qui met à jour
-la documentation. Les modifications sont laissées dans le working tree : rien n'est
-commité automatiquement, on relit avec `git diff`.
+la documentation **et la commite** (R-064), sujet préfixé `docs:` — préfixe qui fait
+sortir ce hook quand il se redéclenche sur ce commit-là. L'agent ne stage que les fichiers
+de doc qu'il a écrits (R-065) : le travail en cours dans le dossier de travail n'est jamais
+emporté. **Rien n'est poussé** : on relit après coup (`git show`), et on peut toujours
+défaire (`git reset --soft HEAD~1`).
+
+S'il ne peut pas commiter — rien à écrire, index verrouillé, `rebase`/`merge` en cours —
+il laisse tout dans le dossier de travail et le dit dans son rapport (`.claude/doc-updater.log`).
 
 ### Ce qui compte comme « gros changement »
 

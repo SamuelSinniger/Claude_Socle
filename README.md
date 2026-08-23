@@ -27,7 +27,7 @@ socle/
 ├── commandes/            les 4 commandes        → .claude/commands/
 ├── githooks/             post-commit + notice   → .githooks/
 ├── modeles/              squelette d'un projet neuf (copié à l'installation SEULEMENT)
-└── outils/               générateur de manifeste
+└── outils/               amorceur (à déposer dans un projet), installeurs, générateur de manifeste
 CHANGELOG.md              versions du socle + impact rétroactif de chaque règle
 projets.md                registre des projets installés et de leur version
 interop.md                lexique des concepts partagés + ce que chaque projet exporte/importe
@@ -46,19 +46,20 @@ interop.md                lexique des concepts partagés + ce que chaque projet 
 
 ## Usage, depuis un projet
 
-Cloner ce dépôt **à côté** des projets (jamais dedans), puis dans chaque projet :
-
-```bash
-git config core.hooksPath .githooks
-```
+L'amorçage tient en **un fichier à déposer dans le dossier du projet** —
+[`socle/outils/amorcer.ps1`](socle/outils/amorcer.ps1) (Windows) ou
+[`amorcer.sh`](socle/outils/amorcer.sh) (POSIX) — et à lancer sans argument. Il trouve ce
+dépôt sur la machine (ou le clone à côté du projet s'il est absent), le met à jour, puis
+appelle l'installeur. Rien d'autre n'est à installer au préalable.
 
 Le manifeste retient les deux chemins d'accès au socle : `depot` (l'URL, valable sur
-n'importe quelle machine) et `clone_local` (le chemin du clone au moment de la génération).
+n'importe quelle machine) et `clone_local` (le chemin du clone, inscrit à l'installation).
 Les commandes essaient le clone local, puis clonent depuis l'URL s'il est absent.
 
 | Commande | Effet |
 |---|---|
-| `socle/outils/installer.ps1 -Projet <projet>` (PowerShell)<br>`sh socle/outils/installer.sh <projet>` (POSIX) | **Amorçage** — la seule étape qui ne passe pas par une commande, puisque `/socle` est lui-même distribué par le socle. Détecte projet vierge (socle + modèles) ou projet ayant ses propres règles (socle seul) |
+| `.\amorcer.ps1` (PowerShell)<br>`sh amorcer.sh` (POSIX) | **Amorçage depuis le projet** — le fichier déposé dans le dossier du projet. Localise ou clone le dépôt socle, `git init` si besoin, puis passe la main à l'installeur |
+| `socle/outils/installer.ps1 -Projet <projet>` (PowerShell)<br>`sh socle/outils/installer.sh <projet>` (POSIX) | **Amorçage depuis ce dépôt** — la copie mécanique selon le manifeste, quand le clone est déjà là. C'est la seule étape qui ne passe pas par une commande, puisque `/socle` est lui-même distribué par le socle. Détecte projet vierge (socle + modèles) ou projet ayant ses propres règles (socle seul) |
 | `/socle install <chemin-de-ce-dépôt>` | Compléter l'installation d'un projet **neuf**. Sur un projet qui a ses propres règles, bascule de lui-même en `adopt` |
 | `/socle adopt <chemin-de-ce-dépôt>` | Faire entrer un projet **existant qui a déjà ses règles** : classement de chaque règle (déjà couverte / à promouvoir / plus stricte / spécifique / en contradiction), validation par l'utilisateur, puis installation |
 | `/socle check` | Version installée, retard éventuel, fichiers socle modifiés localement, dérogations mortes |

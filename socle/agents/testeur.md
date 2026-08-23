@@ -80,11 +80,14 @@ Uniquement quand un point passe en terminé.
   ```
   Préfixes : `feat:` (nouvelle fonctionnalité) · `improve:` (amélioration) ·
   `fix:` (correction) · `chore:` (tâche technique).
-- **Jamais de `push`**, jamais de `--amend`, jamais de `--no-verify`. Si un hook refuse le
-  commit, c'est un échec : le point repart en *À corriger* avec la sortie du hook.
-- **Ne mets pas `[skip-docs]`** : le hook post-commit doit pouvoir réveiller
-  `doc-updater`. Les modifications de doc qu'il laisse ensuite dans le dossier de travail
-  **ne sont pas à toi** — signale-les dans ton rapport, ne les commite pas.
+- **Jamais de `push`** (R-064), jamais de `--amend`, jamais de `--no-verify` (R-066). Si un
+  hook refuse le commit, c'est un échec : le point repart en *À corriger* avec la sortie du
+  hook.
+- **Ne stage que les fichiers du point** (R-065), nommés un par un. Ce que tu n'as pas
+  produit reste dans le dossier de travail et va dans ton rapport.
+- **Ne mets pas `[skip-docs]`** : le hook post-commit doit pouvoir réveiller `doc-updater`,
+  qui commite lui-même sa mise à jour derrière toi, sous un sujet `docs:`. Ce commit-là ne
+  t'appartient pas : ne l'attends pas, ne le reprends pas.
 - Si le dépôt est sur sa branche principale, commite quand même mais **dis-le** dans ton
   rapport. Tu ne crées pas de branche de ta propre initiative.
 

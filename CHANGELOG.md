@@ -17,6 +17,68 @@ décider s'il faut créer un point : écrire « aucun » est une réponse valabl
 
 ---
 
+## 1.4.0 — 2026-08-23
+
+L'amorçage tient désormais en **un fichier déposé dans le dossier du projet**. Et l'agent
+**commite ce qu'il produit** — c'est l'utilisateur qui pousse.
+
+### Ajouté
+
+- **R-064** — Un changement produit par un agent ou une commande est **commité par son
+  auteur** ; le `push` appartient à l'utilisateur. Exception : dans le pipeline
+  `docs/suivi/`, le commit d'un point reste au `testeur` et à lui seul — un point validé
+  donne un commit, et un seul, qui atteste qu'il est *testé*.
+  *Impact rétroactif : aucun sur le code livré. C'est le comportement des commandes et des
+  agents qui change, pas une exigence sur le projet. Concrètement, `/socle install|update|
+  promote|adopt`, `/interop declare|concept` et `doc-updater` ne laissent plus leur travail
+  dans le dossier de travail : ils le commitent. La relecture ne disparaît pas, elle se
+  déplace après coup — `git show HEAD`, et `git reset --soft HEAD~1` si le compte n'y est
+  pas. Rien n'est poussé, donc rien n'est irréversible.*
+
+- **R-065** — Un agent ne stage **que les fichiers qu'il a lui-même écrits**
+  (`git add <chemins>`, jamais `-A` ni `.`) ; ce qui appartient à un autre auteur reste dans
+  le dossier de travail et est signalé dans son rapport.
+  *Impact rétroactif : aucun. C'est le garde-fou de R-064 : `doc-updater` tourne en
+  arrière-plan juste après un commit, pendant que l'humain travaille — un `git add -A`
+  emporterait ses modifications en cours.*
+
+- **R-066** — Un agent ne fait jamais de `--amend`, de `--no-verify`, ni de réécriture
+  d'historique : il ajoute un commit.
+  *Impact rétroactif : aucun — le `testeur` s'y tenait déjà, la règle l'étend à tous.*
+
+- [`socle/outils/amorcer.ps1`](socle/outils/amorcer.ps1) et
+  [`amorcer.sh`](socle/outils/amorcer.sh) : l'amorceur se dépose à la racine du projet et se
+  lance **sans argument**. Il localise le dépôt socle (option, `CLAUDE_SOCLE`, voisin
+  `Claude_Socle` du projet, dossier personnel), le **clone à côté du projet** s'il est absent,
+  **récupère l'amont** s'il est présent — installer depuis un clone en retard de trois
+  versions installerait un socle périmé —, propose `git init -b main` si le projet n'est pas
+  un dépôt, puis passe la main à `installer.ps1`/`installer.sh`.
+  L'amorceur ne copie rien lui-même : la mécanique reste dans l'installeur, qui lit le
+  manifeste. Une seule source de vérité, et un amorceur qui ne vieillit pas avec le socle.
+  *Impact rétroactif : aucun — les installeurs sont inchangés, un projet déjà amorcé n'a rien
+  à faire. Le prérequis « cloner le socle une fois par machine » disparaît de la marche à
+  suivre : le fichier déposé s'en charge.*
+- `DEMARRER.md` : étape 1 réécrite autour du fichier déposé, avec les deux formes sans dépôt
+  préalable (`irm | scriptblock` en PowerShell, `curl | sh` en POSIX) et le rappel que
+  l'amorceur se supprime une fois qu'il a tourné — il n'a pas à être commité dans le projet.
+
+### Modifié
+
+- `/socle`, `/interop`, `/update-docs` et l'agent `doc-updater` : les « ne rien commiter »
+  deviennent des commits nommés — `socle: installation <version>`, `socle: mise à jour
+  <version>`, `socle <version> — <règle>`, `interop: <projet> — <ce qui change>`, `docs: …`.
+  Aucun ne pousse. Deux points d'arrêt restent sans écriture donc sans commit : le classement
+  des règles d'`adopt`, et un fichier socle modifié localement vu par `update`.
+- `.githooks/post-commit` : la consigne passée au CLI demande désormais le commit (sujet
+  `docs:`, staging nommé) et autorise explicitement `git add`/`git commit` — sans quoi, en
+  mode `-p`, le commit serait refusé sans question posée. Le préfixe `docs:` est déjà un
+  garde-fou du hook : il sort quand il se redéclenche sur le commit de `doc-updater`.
+  *Impact rétroactif : aucun. En cas d'échec du commit (index verrouillé, `rebase` en cours,
+  permission refusée), l'agent laisse tout dans le dossier de travail et le dit — c'est-à-dire
+  exactement le comportement d'avant.*
+
+---
+
 ## 1.3.0 — 2026-08-22
 
 Six règles remontées de l'adoption d'**Argonaute** : sécurité serveur, droits des médias,

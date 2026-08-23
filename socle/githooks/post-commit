@@ -86,13 +86,24 @@ REASON="$LINES lignes / $CODE_FILES fichiers de code"
 
 # --- execution --------------------------------------------------------------
 
-PROMPT="Utilise le sous-agent doc-updater pour mettre a jour la documentation du projet apres le commit $SHA (\"$SUBJECT\"). Plage a analyser : HEAD~1..HEAD (ou le commit racine s'il n'a pas de parent). Ne commite rien : laisse les modifications dans le working tree."
+# Le commit de la doc est prefixe "docs:" — c'est ce prefixe qui fait sortir ce hook
+# quand il se declenche sur le commit de doc-updater lui-meme (cf. garde-fous plus haut).
+PROMPT="Utilise le sous-agent doc-updater pour mettre a jour la documentation du projet apres le commit $SHA (\"$SUBJECT\"). Plage a analyser : HEAD~1..HEAD (ou le commit racine s'il n'a pas de parent). Commite ensuite ta mise a jour, sujet prefixe \"docs:\", en ne stageant QUE les fichiers de doc que tu as ecrits (jamais git add -A : l'humain travaille peut-etre en meme temps). Ne pousse pas. Si tu ne peux pas commiter (rien a ecrire, index verrouille, rebase ou merge en cours, echec du commit), laisse tout dans le dossier de travail et dis-le."
 
 CLI=$(git config --get docupdater.cli || echo "${CLAUDE_CLI:-claude}")
 
 if command -v "$CLI" >/dev/null 2>&1; then
     MODEL=$(git config --get docupdater.model || echo "")
     set -- -p "$PROMPT" --permission-mode acceptEdits
+
+    # Les outils git sont autorises explicitement : sans ca, en mode -p, le commit serait
+    # refuse sans question posee — et la doc resterait dans le dossier de travail.
+    # L'option n'est ajoutee que si ce CLI la connait : un drapeau inconnu ferait echouer
+    # tout le run, donc perdre la mise a jour de doc pour gagner son commit.
+    if "$CLI" --help 2>/dev/null | grep -q -- '--allowedTools'; then
+        set -- "$@" --allowedTools \
+            "Bash(git add:*)" "Bash(git commit:*)" "Bash(git status:*)" "Bash(git diff:*)"
+    fi
     [ -n "$MODEL" ] && set -- "$@" --model "$MODEL"
 
     say "commit $SHA : $REASON -> mise a jour de la doc en arriere-plan"
@@ -102,7 +113,7 @@ if command -v "$CLI" >/dev/null 2>&1; then
         status=$?
         printf '%s doc-updater exit=%s (commit %s)\n' "$(date -u +%FT%TZ)" "$status" "$SHA" >> "$LOG"
     ) &
-    say "sortie : $LOG — relis ensuite avec: git diff"
+    say "sortie : $LOG — relis ensuite avec: git log -1 docs: ou git diff"
 else
     printf '%s %s %s\n' "$SHA" "$REASON" "$SUBJECT" >> "$PENDING"
     say "commit $SHA : $REASON"
