@@ -73,19 +73,22 @@ DEPOT=$(git remote get-url origin 2>/dev/null || echo "")
 
     printf '  "modeles": [\n'
     first=1
-    for f in socle/modeles/CLAUDE.md socle/modeles/README.md; do
-        [ -f "$f" ] || continue
-        [ $first -eq 1 ] || printf ',\n'; first=0
-        entree "$f" "$(basename "$f")"
-    done
-    for f in socle/modeles/gitattributes socle/modeles/gitignore; do
-        [ -f "$f" ] || continue
-        [ $first -eq 1 ] || printf ',\n'; first=0
-        entree "$f" ".$(basename "$f")"
-    done
-    find socle/modeles/docs -name '*.md' | sort | while read -r f; do
-        printf ',\n'
-        entree "$f" "$(printf '%s' "$f" | sed 's|^socle/modeles/||')"
+    # On parcourt TOUT socle/modeles/, sans liste à tenir : un squelette n'est pas
+    # forcément fait de Markdown (configuration d'outillage, modèles de merge request,
+    # gabarits), et surtout une liste oubliée poserait un squelette incomplet **sans que
+    # rien ne le signale** — le manifeste, lui, aurait l'air parfaitement cohérent.
+    #
+    # Seule transformation : `gitignore` et `gitattributes` reprennent leur point à
+    # l'arrivée. Ils sont stockés sans, pour ne pas s'appliquer au dépôt socle lui-même.
+    first=1
+    find socle/modeles -type f | LC_ALL=C sort | while read -r f; do
+        dst=$(printf '%s' "$f" | sed 's|^socle/modeles/||')
+        case "$dst" in
+            gitignore|gitattributes) dst=".$dst" ;;
+        esac
+        [ $first -eq 1 ] || printf ',\n'
+        first=0
+        entree "$f" "$dst"
     done
     printf '\n  ]\n'
     printf '}\n'

@@ -142,6 +142,13 @@ stack.
   questions successives pour une même décision épuisent l'attention avant la ligne qui
   comptait. **Vérifiable par** : plus d'une question posée pour une même série.
   *Exception* : aucune.
+- **R-069** — Avant de commencer un travail, l'agent **annonce comment on saura qu'il est
+  bon** : la commande à lancer, le comportement observable, le constat attendu. C'est le
+  pendant, au moment d'agir, des critères de vérification exigés au cadrage (`R-063`) : un
+  travail dont personne n'a dit comment le vérifier sera déclaré fini par son auteur.
+  **Vérifiable par** : un rapport qui conclut « c'est fait » sans qu'aucun moyen de le
+  constater ait été annoncé avant. *Exception* : une tâche dont le résultat **est** le
+  constat — une lecture, une recherche, un rapport.
 
 ## Décisions
 

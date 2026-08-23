@@ -58,6 +58,10 @@ cadrage).
      domaine quand il en existe un, format exposé **documenté**, import qui signale et
      neutralise au lieu de rejeter en bloc.
 
+   **Tu ne récites aucune règle de mémoire.** Une exigence qui te vient sans que tu l'aies
+   lue dans un fichier de ce dépôt vient d'ailleurs — d'un autre projet, d'une habitude,
+   d'un corpus que tu connais : elle n'a pas cours ici.
+
 4. **Classer chaque constat.**
 
    | Niveau | Quand | Effet |

@@ -17,6 +17,55 @@ décider s'il faut créer un point : écrire « aucun » est une réponse valabl
 
 ---
 
+## 1.5.0 — 2026-08-24
+
+Rapatriement depuis le **socle Décibel**, créé la veille à partir du starter de l'équipe.
+Créer un second socle a servi de banc d'essai : ce qui a dû être amélioré là-bas révèle ce
+qui manquait ici.
+
+### Ajouté
+
+- **`/explique <sujet ou @fichier>`** — comprendre un concept, une commande ou un bout de
+  code : tableau, exemple minimal, pièges courants. Lecture seule, hors pipeline.
+- **`/recap`** — récapitulatif de la **session** : ce qui est fait, ce qui reste en suspens,
+  les prochaines étapes. À ne pas confondre avec `/point` sans argument, qui donne l'état du
+  **pipeline** ; les deux répondent à deux questions différentes.
+  *Impact rétroactif : aucun — deux commandes de plus, rien qui contraigne le code existant.
+  Le socle distribue désormais 18 fichiers au lieu de 16.*
+
+- **R-069** — Avant de commencer un travail, l'agent **annonce comment on saura qu'il est
+  bon** : commande à lancer, comportement observable, constat attendu.
+  *Impact rétroactif : aucun sur le code livré. C'est le pendant, au moment d'agir, des
+  critères exigés au cadrage (`R-063`) — un travail dont personne n'a dit comment le vérifier
+  finit déclaré fini par son auteur. Reprise de l'`ia-rules.md` de Décibel, qui portait cette
+  discipline et qui n'avait aucun équivalent ici.*
+
+### Modifié
+
+- **`generer-manifeste.sh` parcourt désormais tout `socle/modeles/`** au lieu de suivre une
+  liste tenue à la main. Le squelette d'un projet n'est pas forcément fait de Markdown, et
+  surtout : **une liste oubliée pose un squelette incomplet sans que rien ne le signale** —
+  le manifeste, lui, a l'air parfaitement cohérent. C'est la même famille de défaut que les
+  lignes `.gitignore` qui n'arrivaient jamais (1.4.0). Le défaut est apparu en construisant
+  le socle Décibel, dont les modèles comportent de l'outillage non-Markdown.
+  *Impact rétroactif : aucun — à contenu égal, le manifeste régénéré liste exactement les
+  mêmes 19 modèles, avec les mêmes empreintes ; seul leur ordre change.*
+- L'agent `normes` : **« Tu ne récites aucune règle de mémoire.** Une exigence qui te vient
+  sans que tu l'aies lue dans un fichier de ce dépôt vient d'ailleurs : elle n'a pas cours
+  ici. » Écrit pour Décibel après avoir constaté que l'agent portait en dur des règles de
+  code — dont une qui **contredisait** le corpus qu'il était censé faire respecter.
+  *Impact rétroactif : aucun ; c'est un garde-fou contre les faux positifs.*
+
+### Non rapatrié, délibérément
+
+- **L'échelle de degrés** *imposé · attendu · libre* du corpus Décibel. Elle est meilleure
+  que le tout-ou-rien d'ici : elle dit dans la règle elle-même ce qui est dérogeable, là où
+  ce socle n'offre que la dérogation déclarée. L'adopter suppose de **re-qualifier les 46
+  règles** une par une — un jugement par règle, pas une transformation mécanique. À décider,
+  pas à subir.
+
+---
+
 ## 1.4.0 — 2026-08-23
 
 L'amorçage tient désormais en **un fichier déposé dans le dossier du projet**. Et l'agent
