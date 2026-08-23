@@ -45,6 +45,24 @@ function Test-Socle([string]$chemin) {
     return (Test-Path -PathType Leaf (Join-Path $chemin 'socle\socle.json'))
 }
 
+# Le depot inscrit dans le manifeste d'un clone, ou '' s'il n'y en a pas.
+function Get-DepotDe([string]$chemin) {
+    $m = Get-Content (Join-Path $chemin 'socle\socle.json') -Raw
+    if ($m -match '"depot":\s*"([^"]*)"') { return $Matches[1] }
+    return ''
+}
+
+# …et c'est le NÔTRE si ce manifeste porte le dépôt de cet amorceur. Plusieurs socles
+# peuvent cohabiter sur une machine — jeux de projets distincts, corpus distincts : un
+# clone voisin qui n'est pas le nôtre ne doit pas être retenu, même s'il est au bon
+# endroit et porte le bon nom. Un manifeste sans dépôt (socle purement local) est accepté :
+# on ne peut rien conclure, et le refuser bloquerait un cas légitime.
+function Test-MonSocle([string]$chemin) {
+    if (-not (Test-Socle $chemin)) { return $false }
+    $d = Get-DepotDe $chemin
+    return ($d -eq '' -or $d -eq $Depot)
+}
+
 # --- 1. le projet ---------------------------------------------------------------
 
 # Sans -Projet : le dossier où se trouve ce fichier (le cas « déposé dans le projet »),
@@ -67,10 +85,13 @@ Write-Host "[i] Projet : $Projet"
 
 if ($Socle) {
     if (-not (Test-Socle $Socle)) { throw "Pas de socle/socle.json dans : $Socle" }
+    if (-not (Test-MonSocle $Socle)) {
+        throw "$Socle est un socle, mais pas celui-ci : son depot est $(Get-DepotDe $Socle), le mien $Depot. Prends l'amorceur de CE socle-la, ou corrige -Socle."
+    }
     $Socle = (Resolve-Path $Socle).Path
 } else {
     # Emplacements plausibles, du plus proche au plus general. Le premier qui porte
-    # le manifeste gagne.
+    # notre manifeste gagne — un clone d'un autre socle est ignore, pas retenu.
     $parent = Split-Path $Projet -Parent
     $pistes = @(
         $env:CLAUDE_SOCLE,
@@ -80,7 +101,7 @@ if ($Socle) {
         (Join-Path $HOME "Documents\GitHub\$NomDuClone")
     )
     foreach ($p in $pistes) {
-        if (Test-Socle $p) { $Socle = (Resolve-Path $p).Path; break }
+        if (Test-MonSocle $p) { $Socle = (Resolve-Path $p).Path; break }
     }
 }
 

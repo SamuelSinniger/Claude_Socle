@@ -86,6 +86,35 @@ sh socle/outils/generer-manifeste.sh 1.1.0 2026-08-22
 
 4. Commiter, puis `/socle update` dans les projets listés dans [projets.md](projets.md).
 
+## Créer un **second** socle, pour un autre ensemble de projets
+
+Un socle porte son identité — l'URL de son dépôt, le nom de son dossier de clone — à **neuf
+endroits**, dont deux fichiers **distribués** (`socle/commandes/socle.md`, `interop.md`).
+Recopier le dépôt à la main sans les corriger produit un socle qui déploie, dans ses propres
+projets, des commandes pointant vers le dépôt d'origine. D'où l'outil :
+
+```bash
+sh socle/outils/nouveau-socle.sh <chemin-du-nouveau-socle> <url-du-dépôt> --jumeau
+```
+
+Le mode n'a pas de défaut, parce que c'est la décision de départ :
+
+| Mode | Ce qu'il produit | Pour qui |
+|---|---|---|
+| `--jumeau` | la machinerie **et** les règles actuelles | un ensemble de projets qui ressemble au premier : on part d'un corpus éprouvé |
+| `--vierge` | la machinerie seule — agents, commandes, pipeline, modèles, format des normes — et **aucune règle** | un domaine différent : le corpus se construira depuis les projets, par `/socle adopt` puis `/socle promote` |
+
+Dans les deux cas : registres remis à zéro (`projets.md`, déclarations d'`interop.md`),
+`CHANGELOG` réécrit en `1.0.0` avec la provenance, dépôt git initialisé, manifeste généré.
+
+**Les deux corpus divergent à partir de là.** Une règle promue dans l'un n'ira pas dans
+l'autre, et un même `R-###` pourra désigner deux règles différentes : chaque
+`regles-communes.md` fait autorité pour ses seuls projets. C'est le prix de la séparation —
+avant de le payer, vérifier qu'une **dérogation** déclarée dans un projet ne suffisait pas.
+
+Les socles cohabitent sans se mélanger sur une même machine : chaque amorceur n'accepte qu'un
+clone dont le manifeste porte **son** dépôt, et refuse les autres en le disant.
+
 ## Note pour l'agent
 
 Les liens des fichiers de `socle/agents/`, `socle/commandes/` et `socle/modeles/` sont

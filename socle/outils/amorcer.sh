@@ -50,6 +50,17 @@ demander() {
 # Un dossier est un dépôt socle s'il porte le manifeste.
 est_socle() { [ -n "${1:-}" ] && [ -f "$1/socle/socle.json" ]; }
 
+# …et c'est le NÔTRE si ce manifeste porte le dépôt de cet amorceur. Plusieurs socles
+# peuvent cohabiter sur une machine — jeux de projets distincts, corpus distincts : un
+# clone voisin qui n'est pas le nôtre ne doit pas être retenu, même s'il est au bon
+# endroit et porte le bon nom. Un manifeste sans dépôt (socle purement local) est accepté :
+# on ne peut rien conclure, et le refuser bloquerait un cas légitime.
+est_mon_socle() {
+    est_socle "${1:-}" || return 1
+    depot=$(sed -n 's/.*"depot": "\([^"]*\)".*/\1/p' "$1/socle/socle.json" | head -1)
+    [ -z "$depot" ] || [ "$depot" = "$DEPOT" ]
+}
+
 # Chemin natif (sous Git Bash, `pwd` seul renvoie /f/… que les outils Windows ne savent
 # pas résoudre — et c'est ce chemin qu'on affiche à l'utilisateur).
 natif() { ( cd "$1" && { pwd -W 2>/dev/null || pwd; } ); }
@@ -78,10 +89,17 @@ echo "[i] Projet : $PROJET"
 
 if [ -n "$SOCLE" ]; then
     est_socle "$SOCLE" || { echo "pas de socle/socle.json dans : $SOCLE" >&2; exit 2; }
+    est_mon_socle "$SOCLE" || {
+        echo "$SOCLE est un socle, mais pas celui-ci :" >&2
+        echo "  son dépôt   $(sed -n 's/.*"depot": "\([^"]*\)".*/\1/p' "$SOCLE/socle/socle.json" | head -1)" >&2
+        echo "  le mien     $DEPOT" >&2
+        echo "Prends l'amorceur de CE socle-là, ou corrige --socle." >&2
+        exit 2
+    }
     SOCLE=$(natif "$SOCLE")
 else
     # Emplacements plausibles, du plus proche au plus général. Le premier qui porte
-    # le manifeste gagne.
+    # notre manifeste gagne — un clone d'un autre socle est ignoré, pas retenu.
     for piste in \
         "${CLAUDE_SOCLE:-}" \
         "$(dirname "$PROJET")/$NOM_DU_CLONE" \
@@ -89,7 +107,7 @@ else
         "$HOME/GitHub/$NOM_DU_CLONE" \
         "$HOME/Documents/GitHub/$NOM_DU_CLONE"
     do
-        if est_socle "$piste"; then SOCLE=$(natif "$piste"); break; fi
+        if est_mon_socle "$piste"; then SOCLE=$(natif "$piste"); break; fi
     done
 fi
 

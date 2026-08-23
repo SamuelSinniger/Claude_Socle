@@ -84,6 +84,21 @@ L'amorçage tient désormais en **un fichier déposé dans le dossier du projet*
   préalable (`irm | scriptblock` en PowerShell, `curl | sh` en POSIX) et le rappel que
   l'amorceur se supprime une fois qu'il a tourné — il n'a pas à être commité dans le projet.
 
+- [`socle/outils/nouveau-socle.sh`](socle/outils/nouveau-socle.sh) : créer un **second
+  socle**, pour un ensemble de projets distinct. L'identité d'un socle est écrite à neuf
+  endroits, dont **deux fichiers distribués** (`socle/commandes/socle.md`, `interop.md`) : un
+  dépôt recopié à la main sans les corriger déploie chez ses projets des commandes qui
+  pointent vers le dépôt d'origine, et le premier `/socle update` les resynchronise sur le
+  mauvais socle. L'outil réécrit les neuf, remet les registres à zéro, réécrit le CHANGELOG
+  en `1.0.0` avec la provenance, initialise le dépôt et génère le manifeste.
+  Deux modes, sans valeur par défaut — c'est la décision de départ, elle se prend :
+  `--jumeau` (la machinerie et les 45 règles) ou `--vierge` (la machinerie seule, corpus
+  vide, à construire depuis les projets).
+  *Impact rétroactif : aucun. À savoir avant de s'en servir : les deux corpus divergent
+  dès la création — une règle promue dans l'un n'ira pas dans l'autre, et un même `R-###`
+  pourra désigner deux règles différentes. Une dérogation déclarée suffit souvent ; deux
+  socles se justifient quand les projets n'ont ni le même domaine ni les mêmes lecteurs.*
+
 ### Modifié
 
 - `/socle`, `/interop`, `/update-docs` et l'agent `doc-updater` : les « ne rien commiter »
@@ -91,6 +106,13 @@ L'amorçage tient désormais en **un fichier déposé dans le dossier du projet*
   <version>`, `socle <version> — <règle>`, `interop: <projet> — <ce qui change>`, `docs: …`.
   Aucun ne pousse. Deux points d'arrêt restent sans écriture donc sans commit : le classement
   des règles d'`adopt`, et un fichier socle modifié localement vu par `update`.
+- Les deux amorceurs n'acceptent plus **que le clone de leur propre socle** : le manifeste
+  d'un candidat doit porter le dépôt de l'amorceur, sinon il est ignoré pendant la recherche,
+  et refusé avec les deux URL en clair s'il a été désigné par `--socle`. Sans cette
+  vérification, deux socles sur une machine se confondaient — le voisin trouvé le premier
+  gagnait, quel que soit le socle auquel le projet appartenait. Un manifeste sans dépôt
+  (socle purement local) reste accepté : on ne peut rien en conclure.
+  *Impact rétroactif : aucun tant qu'il n'y a qu'un socle sur la machine.*
 - `.githooks/post-commit` : la consigne passée au CLI demande désormais le commit (sujet
   `docs:`, staging nommé) et autorise explicitement `git add`/`git commit` — sans quoi, en
   mode `-p`, le commit serait refusé sans question posée. Le préfixe `docs:` est déjà un
