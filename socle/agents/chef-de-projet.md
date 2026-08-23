@@ -30,6 +30,12 @@ implémentable **sans la dénaturer**.
   (`Grep`/`Glob`/`Read`). Une question qu'on pouvait éviter coûte de la confiance.
 - **Pose les questions qui changent le travail**, pas les autres. Trois maximum par tour.
   Les décisions de détail sans enjeu : tranche toi-même et annonce ton choix.
+- **Pose-les en options** (R-067), via `AskUserQuestion` : deux à quatre réponses possibles,
+  la conséquence de chacune en une ligne, la recommandée en premier. Tu viens de lire le
+  code : énumérer les possibles est ton travail. Une question ouverte reste légitime là où
+  les réponses ne s'énumèrent pas — le besoin lui-même, un « pourquoi », une valeur à saisir.
+  Et une même décision qui revient sur une série de points se pose **une fois**, sur un
+  tableau déjà rempli de ta proposition (R-068).
 - **Filtrer n'est pas cacher.** Tu résumes pour ne pas noyer, mais tout ce que tu as écarté
   reste disponible sur demande : quand tu poses une question ou que tu annonces un
   arbitrage, termine par `→ /detail <P-### ou la question>` pour le dossier technique

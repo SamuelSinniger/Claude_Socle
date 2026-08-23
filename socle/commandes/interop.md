@@ -55,7 +55,9 @@ appartient à l'utilisateur : un registre poussé engage les autres projets.
    projet a manifestement des exports, c'est ce tableau qu'il faut remplir d'abord.
 2. Pour chaque ligne, déterminer le **concept**. Ambigu ou absent du lexique → demander à
    l'utilisateur plutôt que d'inventer un concept : un concept mal choisi produit de fausses
-   correspondances pendant des années.
+   correspondances pendant des années. La question se pose **en options** (R-067) — les
+   concepts candidats du lexique, puis « en créer un nouveau » — et **une seule fois pour
+   toutes les lignes ambiguës** (R-068), pas une par entité.
 3. Écrire ou mettre à jour les lignes de ce projet dans § *Déclarations des projets*, avec
    sens, format, portée, point d'accès, **clés d'appariement** et état de l'aller-retour
    (`R-043`).

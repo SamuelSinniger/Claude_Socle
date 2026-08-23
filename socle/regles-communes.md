@@ -127,6 +127,22 @@ stack.
 - **R-066** — Un agent ne fait jamais de `--amend`, de `--no-verify`, ni de réécriture
   d'historique : il ajoute un commit. *Exception* : aucune.
 
+## Dialogue avec l'utilisateur
+
+- **R-067** — Une question posée à l'utilisateur lui présente des **options** (2 à 4),
+  chacune avec sa conséquence en une ligne, la recommandée en premier et dite comme telle.
+  Sous Claude Code, `AskUserQuestion` en est le moyen. Une question ouverte fait porter à
+  l'utilisateur le travail d'énumérer les possibles — c'est celui de l'agent, qui vient de
+  lire le code. **Vérifiable par** : une question sans options dont les réponses étaient
+  énumérables. *Exception* : les réponses ne s'énumèrent pas — cadrage d'un besoin, « pourquoi
+  ceci plutôt que cela », valeur à saisir (un nom, un chemin, un seuil).
+- **R-068** — Une décision **répétée sur une série** (classer N règles, arbitrer N conflits)
+  se présente comme **un tableau déjà rempli de la proposition de l'agent**, à amender ; la
+  question porte alors sur ce que l'utilisateur veut changer, jamais sur chaque ligne. N
+  questions successives pour une même décision épuisent l'attention avant la ligne qui
+  comptait. **Vérifiable par** : plus d'une question posée pour une même série.
+  *Exception* : aucune.
+
 ## Décisions
 
 - **R-070** — Tout choix structurant tranché est consigné **daté** dans

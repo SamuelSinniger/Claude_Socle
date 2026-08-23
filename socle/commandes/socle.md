@@ -20,8 +20,10 @@ pour chaque fichier distribué, sa **destination** dans le projet et son **empre
    git clone https://github.com/SamuelSinniger/Claude_Socle.git
    ```
 
-   Cloner **à côté du projet**, jamais dedans. Demande à l'utilisateur où le poser plutôt
-   que de choisir seul.
+   Cloner **à côté du projet**, jamais dedans. Demande où le poser plutôt que de choisir
+   seul — en options (R-067), pas en question ouverte : le dossier parent du projet
+   *(recommandé)* · un emplacement déjà repéré sur la machine, si tu en as trouvé un ·
+   un chemin qu'il donne.
 
 Quand le clone local existe, **récupère l'amont avant de comparer** (`git -C <clone> fetch`
 puis `git -C <clone> status`) : comparer à un clone en retard de trois versions donnerait un
@@ -58,8 +60,10 @@ recommandée. Rien n'est modifié par `check`.
 ## `update` — appliquer la version disponible
 
 1. Faire un `check` d'abord. **S'il existe un fichier socle modifié localement, s'arrêter**
-   et demander : convertir en dérogation, ou écraser en assumant la perte ? Ne jamais
-   écraser en silence.
+   et poser **une** question à options (R-067), en montrant d'abord le `git diff` de l'écart :
+   convertir en dérogation déclarée *(recommandé — c'est la voie prévue)* · écraser en
+   assumant la perte · interrompre la mise à jour. Plusieurs fichiers dans ce cas se traitent
+   en un seul lot (R-068). Ne jamais écraser en silence.
 2. Lire le `CHANGELOG.md` du dépôt socle **entre la version locale et la version
    disponible**. C'est le cœur de l'opération : ce que ça implique ici compte plus que la
    copie des fichiers.
@@ -143,6 +147,22 @@ regarderait pas : il poserait le socle à côté, laissant deux corps de règles
    décision d'agent. Pour chaque candidate, proposer l'identifiant `R-###` et la formulation
    au format du socle, pour qu'il n'ait qu'à valider ou corriger.
 
+   **Le classement se valide en bloc, pas règle par règle** (R-068) : le tableau *est* ta
+   proposition, chaque ligne porte déjà la catégorie que tu retiens. Puis **une** question à
+   options (R-067) :
+
+   | Option | Effet |
+   |---|---|
+   | Valider le classement *(recommandé si rien ne cloche)* | on passe à l'étape 4 |
+   | Corriger des lignes | l'utilisateur nomme les règles à reclasser — tu ne reposes la question que sur celles-là |
+   | Ne rien promouvoir pour l'instant | tout ce qui est générique redescend en convention de projet ; le socle est posé sans être modifié |
+
+   Vingt règles classées ne font donc **pas** vingt questions. Deux cas seulement méritent
+   leur propre question à options, parce qu'une réponse par défaut y serait un choix caché :
+   une règle **en contradiction** avec le socle (dérogation déclarée · corriger le socle ·
+   abandonner la règle du projet) et une règle **plus stricte** (durcir le socle pour tous ·
+   la garder en convention de ce projet). Regroupe-les : une question par cas, pas par règle.
+
 4. **Appliquer ce qui a été validé**, dans cet ordre :
    - les promotions et durcissements, via la procédure `promote` (règle, entrée de CHANGELOG
      avec impact rétroactif, manifeste régénéré) ;
@@ -205,6 +225,10 @@ regarderait pas : il poserait le socle à côté, laissant deux corps de règles
 - **Aucun commit tant qu'une décision est en attente.** `adopt` s'arrête sur le classement
   des règles, `update` s'arrête sur un fichier socle modifié localement : à ces points-là,
   rien n'est écrit, donc rien n'est commité.
+- **Tes questions se posent en options** (R-067), avec la conséquence de chacune et la
+  recommandée en premier : tu viens de lire le manifeste, le CHANGELOG et le code — énumérer
+  les possibles est ton travail, pas celui de l'utilisateur. Et une décision qui se répète
+  sur une série se pose **une fois**, sur un tableau déjà rempli (R-068).
 - **Aucune modification d'un fichier socle dans un projet**, dans aucun verbe. La seule
   écriture licite côté projet, hors copie : le `CLAUDE.md` (dérogations) et
   `docs/suivi/**` (points de mise en conformité).

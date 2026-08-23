@@ -46,6 +46,23 @@ L'amorçage tient désormais en **un fichier déposé dans le dossier du projet*
   d'historique : il ajoute un commit.
   *Impact rétroactif : aucun — le `testeur` s'y tenait déjà, la règle l'étend à tous.*
 
+- **R-067** — Une question posée à l'utilisateur lui présente des **options** (2 à 4), avec
+  la conséquence de chacune et la recommandée en premier (`AskUserQuestion` sous Claude
+  Code). Exception : les réponses qui ne s'énumèrent pas — cadrage d'un besoin, « pourquoi »,
+  valeur à saisir. Énumérer les possibles est le travail de l'agent, qui vient de lire le
+  code ; une question ouverte le renvoie à l'utilisateur.
+  *Impact rétroactif : aucun sur le code livré — c'est la conduite du dialogue qui change.
+  Nouvelle section « Dialogue avec l'utilisateur » dans les règles communes : le socle
+  n'avait jusqu'ici aucune règle sur la façon de poser une question.*
+
+- **R-068** — Une décision **répétée sur une série** se présente comme un tableau déjà rempli
+  de la proposition de l'agent, à amender — pas comme N questions successives.
+  *Impact rétroactif : aucun. C'est `/socle adopt` qui en avait le plus besoin : un projet
+  qui arrive avec vingt règles se voyait poser vingt questions, et l'attention était épuisée
+  avant la ligne qui comptait. Le classement se valide désormais en bloc, et seuls deux cas
+  gardent leur question propre — une règle en contradiction avec le socle, une règle plus
+  stricte —, regroupés par cas et non par règle.*
+
 - [`socle/outils/amorcer.ps1`](socle/outils/amorcer.ps1) et
   [`amorcer.sh`](socle/outils/amorcer.sh) : l'amorceur se dépose à la racine du projet et se
   lance **sans argument**. Il localise le dépôt socle (option, `CLAUDE_SOCLE`, voisin
