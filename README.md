@@ -13,6 +13,10 @@ git clone https://github.com/SamuelSinniger/Claude_Socle.git
 > **Pour démarrer un projet, va directement à [DEMARRER.md](DEMARRER.md)** — la marche à
 > suivre pas à pas, l'ordre dans lequel remplir le squelette, et les erreurs classiques.
 > Ce README-ci décrit la mécanique du socle.
+>
+> **À faire lire à quelqu'un qui ne l'utilise pas encore : [PRESENTATION.md](PRESENTATION.md)**
+> — à quoi ça sert, ce que ça change au quotidien, et le bilan honnête (ce que ça donne *et*
+> ce que ça coûte).
 
 ## Ce qu'il contient
 
