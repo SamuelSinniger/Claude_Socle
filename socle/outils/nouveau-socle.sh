@@ -16,16 +16,21 @@
 #              normes) et part sans aucune règle. Le corpus se construit depuis les
 #              projets, par /socle adopt et /socle promote.
 #
+# À la place de l'URL, `--local` crée un socle sans dépôt distant : le manifeste part
+# sans champ `depot`, les URL sont remplacées par le placeholder ⟨url-du-dépôt⟩ — que
+# `grep -rn '⟨'` retrouve le jour de la publication — et l'amorceur localise le socle par
+# son chemin au lieu de savoir le cloner.
+#
 # Options :
 #   --nom <NomDuClone>   nom du dossier de clone cherché par l'amorceur
-#                        (défaut : le nom du dépôt déduit de l'URL)
+#                        (défaut : le nom du dépôt déduit de l'URL, ou du dossier cible)
 #   --date <AAAA-MM-JJ>  date de la version 1.0.0 (défaut : aujourd'hui)
 
 set -eu
 
 CIBLE=${1:-}
 URL=${2:-}
-[ $# -ge 2 ] && shift 2
+if [ "$URL" = "--local" ]; then URL=''; LOCAL=oui; shift 1; else LOCAL=non; [ $# -ge 2 ] && shift 2; fi
 
 MODE=''
 NOM=''
@@ -34,6 +39,7 @@ DATE=$(date +%F)
 while [ $# -gt 0 ]; do
     case "$1" in
         --jumeau|--vierge) MODE=$1; shift ;;
+        --local) LOCAL=oui; shift ;;
         --nom)  NOM=${2:-};  shift 2 ;;
         --date) DATE=${2:-}; shift 2 ;;
         *) echo "option inconnue : $1" >&2; exit 2 ;;
@@ -46,7 +52,8 @@ usage() {
     echo "  --vierge  garde la machinerie, part sans aucune règle" >&2
 }
 
-[ -n "$CIBLE" ] && [ -n "$URL" ] || { usage; exit 2; }
+[ -n "$CIBLE" ] || { usage; exit 2; }
+[ -n "$URL" ] || [ "$LOCAL" = oui ] || { usage; exit 2; }
 [ -n "$MODE" ] || { echo "Choisis un mode : --jumeau ou --vierge." >&2; usage; exit 2; }
 [ -d socle ] && [ -f socle/socle.json ] || { echo "à lancer depuis la racine d'un dépôt socle" >&2; exit 2; }
 if [ -e "$CIBLE" ] && [ -n "$(ls -A "$CIBLE" 2>/dev/null)" ]; then
@@ -71,13 +78,25 @@ ANCIENNE_BASE=$(sans_git "$ANCIENNE_URL")
 ANCIEN_CHEMIN=$(chemin_de "$ANCIENNE_URL")
 ANCIEN_NOM=$(nom_de "$ANCIENNE_URL")
 
-NOUVELLE_BASE=$(sans_git "$URL")
-NOUVEAU_CHEMIN=$(chemin_de "$URL")
-[ -n "$NOM" ] || NOM=$(nom_de "$URL")
+if [ "$LOCAL" = oui ]; then
+    # Pas de dépôt : on écrit le placeholder maison, celui que `grep -rn '⟨'` retrouve.
+    # Une URL inventée serait pire que pas d'URL — elle serait crue.
+    NOUVELLE_BASE="⟨url-du-dépôt⟩"
+    NOUVEAU_CHEMIN='⟨url-du-dépôt⟩'
+    [ -n "$NOM" ] || NOM=$(basename "$CIBLE")
+else
+    NOUVELLE_BASE=$(sans_git "$URL")
+    NOUVEAU_CHEMIN=$(chemin_de "$URL")
+    [ -n "$NOM" ] || NOM=$(nom_de "$URL")
+fi
 
 echo "[i] Source  : $SOURCE — socle $VERSION_SOURCE, $ANCIENNE_URL"
 echo "[i] Nouveau : $CIBLE"
-echo "[i] Dépôt   : $URL   (dossier de clone cherché par l'amorceur : $NOM)"
+if [ "$LOCAL" = oui ]; then
+    echo "[i] Dépôt   : aucun pour l'instant   (dossier de clone cherché par l'amorceur : $NOM)"
+else
+    echo "[i] Dépôt   : $URL   (dossier de clone cherché par l'amorceur : $NOM)"
+fi
 echo "[i] Mode    : $MODE"
 echo
 
@@ -98,6 +117,16 @@ echo "  copié   socle/ — règles, agents, commandes, hooks, modèles, outils"
 echo "  copié   README.md, DEMARRER.md, .gitattributes, les registres (vidés plus bas)"
 
 # --- identité : les neuf points -------------------------------------------------
+
+# En mode local, l'URL entière part d'abord : sinon le chemin « compte/dépôt » serait
+# remplacé seul, laissant un « https://github.com/⟨url-du-dépôt⟩ » qui ment sur l'hébergeur.
+if [ "$LOCAL" = oui ]; then
+    find "$CIBLE" -type f \( -name '*.md' -o -name '*.sh' -o -name '*.ps1' \) -exec sed -i \
+        -e "s|https://raw.githubusercontent.com/$ANCIEN_CHEMIN/main/|$NOUVELLE_BASE/|g" \
+        -e "s|$ANCIENNE_URL|$NOUVELLE_BASE|g" \
+        -e "s|$ANCIENNE_BASE|$NOUVELLE_BASE|g" \
+        {} +
+fi
 
 # Ordre imposé : le chemin « compte/dépôt » d'abord — il couvre github.com ET
 # raw.githubusercontent.com d'un coup —, le nom nu ensuite, sinon le second mange le premier.
@@ -227,7 +256,9 @@ echo "  écrit   CHANGELOG.md — version 1.0.0 du $DATE"
 
 echo
 git -C "$CIBLE" init -q -b main
-git -C "$CIBLE" remote add origin "$URL"
+# Sans remote, generer-manifeste.sh laisse `depot` vide : c'est exact, et les amorceurs
+# acceptent un manifeste sans dépôt (ils ne peuvent rien en conclure).
+[ "$LOCAL" = oui ] || git -C "$CIBLE" remote add origin "$URL"
 # generer-manifeste.sh lit `git remote get-url origin` : le champ depot du nouveau
 # manifeste est juste dès la première génération.
 ( cd "$CIBLE" && sh socle/outils/generer-manifeste.sh 1.0.0 "$DATE" )
@@ -236,11 +267,20 @@ git -C "$CIBLE" remote add origin "$URL"
 
 echo
 echo "Fait. Ensuite :"
-echo "  1. crée le dépôt vide chez ton hébergeur : $URL"
-echo "  2. relis (git -C \"$CIBLE\" status), puis :"
-echo "       git -C \"$CIBLE\" add -A"
-echo "       git -C \"$CIBLE\" commit -m \"Socle 1.0.0 — $RESUME\""
-echo "       git -C \"$CIBLE\" push -u origin main"
+if [ "$LOCAL" = oui ]; then
+    echo "  1. relis (git -C \"$CIBLE\" status), puis commite :"
+    echo "       git -C \"$CIBLE\" add -A"
+    echo "       git -C \"$CIBLE\" commit -m \"Socle 1.0.0 — $RESUME\""
+    echo "  2. le jour de la publication : crée le dépôt, ajoute le remote, puis"
+    echo "       grep -rn '⟨url-du-dépôt⟩' \"$CIBLE\"    → les endroits à compléter"
+    echo "       sh socle/outils/generer-manifeste.sh 1.0.1 <date>   → depot renseigné"
+else
+    echo "  1. crée le dépôt vide chez ton hébergeur : $URL"
+    echo "  2. relis (git -C \"$CIBLE\" status), puis :"
+    echo "       git -C \"$CIBLE\" add -A"
+    echo "       git -C \"$CIBLE\" commit -m \"Socle 1.0.0 — $RESUME\""
+    echo "       git -C \"$CIBLE\" push -u origin main"
+fi
 echo "  3. amorce un projet avec CE socle : dépose"
 echo "       $CIBLE/socle/outils/amorcer.sh   (ou amorcer.ps1)"
 echo "     à la racine du projet, et lance-le."

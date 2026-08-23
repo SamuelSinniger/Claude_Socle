@@ -99,6 +99,13 @@ L'amorçage tient désormais en **un fichier déposé dans le dossier du projet*
   pourra désigner deux règles différentes. Une dérogation déclarée suffit souvent ; deux
   socles se justifient quand les projets n'ont ni le même domaine ni les mêmes lecteurs.*
 
+  **`--local`**, à la place de l'URL, crée un socle **sans dépôt distant** : le manifeste
+  part sans champ `depot` — que les amorceurs acceptent, ne pouvant rien en conclure — et
+  les URL sont remplacées par le placeholder maison `⟨url-du-dépôt⟩`, que
+  `grep -rn '⟨'` retrouve le jour de la publication. **Inventer une URL aurait été pire
+  que n'en mettre aucune : elle aurait été crue.** Ajouté en créant le socle Décibel, qui
+  n'a pas encore de dépôt.
+
 ### Modifié
 
 - `/socle`, `/interop`, `/update-docs` et l'agent `doc-updater` : les « ne rien commiter »

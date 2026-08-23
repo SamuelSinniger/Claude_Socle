@@ -95,6 +95,8 @@ projets, des commandes pointant vers le dépôt d'origine. D'où l'outil :
 
 ```bash
 sh socle/outils/nouveau-socle.sh <chemin-du-nouveau-socle> <url-du-dépôt> --jumeau
+# ou, sans dépôt distant pour l’instant :
+sh socle/outils/nouveau-socle.sh <chemin-du-nouveau-socle> --local --jumeau
 ```
 
 Le mode n'a pas de défaut, parce que c'est la décision de départ :
