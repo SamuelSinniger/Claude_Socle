@@ -1,5 +1,5 @@
 {
-  "version": "1.5.0",
+  "version": "1.5.1",
   "date": "2026-08-24",
   "depot": "https://github.com/SamuelSinniger/Claude_Socle.git",
   "fichiers": [
@@ -12,8 +12,8 @@
     { "source": "socle/agents/doc-updater.md", "destination": ".claude/agents/doc-updater.md", "sha256": "fa04e5f12e295b05" },
     { "source": "socle/agents/normes.md", "destination": ".claude/agents/normes.md", "sha256": "ed416a076b3c355a" },
     { "source": "socle/agents/testeur.md", "destination": ".claude/agents/testeur.md", "sha256": "8d34bbf0075fa295" },
-    { "source": "socle/commandes/detail.md", "destination": ".claude/commands/detail.md", "sha256": "9526bee79d6da247" },
-    { "source": "socle/commandes/explique.md", "destination": ".claude/commands/explique.md", "sha256": "b64081099c62f718" },
+    { "source": "socle/commandes/detail.md", "destination": ".claude/commands/detail.md", "sha256": "a1a5141a177c9d10" },
+    { "source": "socle/commandes/explique.md", "destination": ".claude/commands/explique.md", "sha256": "6f48e735d44e5b30" },
     { "source": "socle/commandes/interop.md", "destination": ".claude/commands/interop.md", "sha256": "ee83772f479d918a" },
     { "source": "socle/commandes/point.md", "destination": ".claude/commands/point.md", "sha256": "2be6f03c8071f690" },
     { "source": "socle/commandes/recap.md", "destination": ".claude/commands/recap.md", "sha256": "08db989a0afd3811" },

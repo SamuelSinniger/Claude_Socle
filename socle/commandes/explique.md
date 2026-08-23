@@ -10,3 +10,11 @@ Consignes :
 - Donne un **exemple concret minimal**.
 - Termine par les **pièges courants** ou le « quand l'utiliser / quand l'éviter ».
 - Reste concis : pas de remplissage.
+
+---
+
+**Ce n'est pas `/detail`.** `/explique` porte sur ce qui existe **hors de ce dépôt** — une
+notion, une commande, une bibliothèque, un mécanisme de langage — et se termine par « voilà
+ce que c'est ». Dès que la question porte sur **ce projet-ci** (« comment marche notre
+authentification ? », « qu'est-ce que ça coûterait de changer X ? »), c'est `/detail` :
+il va lire le code, chiffre les options et **recommande**.

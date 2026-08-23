@@ -8,6 +8,10 @@ L'utilisateur veut le **dessous des cartes** avant de trancher. Sujet : $ARGUMEN
 Tu produis un **dossier de décision**, pas un cours. L'objectif est qu'à la fin de ta
 réponse l'utilisateur puisse dire « on part sur B » sans avoir à te relancer.
 
+> Pour **comprendre** une notion générale — un mécanisme de langage, une commande, une
+> bibliothèque — sans rapport avec le code de ce dépôt, c'est [`/explique`](explique.md).
+> `/detail` va lire *ce* code et sert à **décider**.
+
 ## Ce que tu fais d'abord
 
 1. **Identifier la question réelle.** Si l'argument est un id `P-###`, lis le point dans

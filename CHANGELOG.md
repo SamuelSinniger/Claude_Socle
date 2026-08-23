@@ -17,6 +17,19 @@ décider s'il faut créer un point : écrire « aucun » est une réponse valabl
 
 ---
 
+## 1.5.1 — 2026-08-24
+
+### Corrigé
+
+- **La frontière entre `/detail` et `/explique` n'était écrite nulle part.** Deux commandes
+  dont le périmètre n'est pas dit finissent confondues, et la moins utile mange l'autre.
+  Elle l'est maintenant, dans les deux fichiers : `/explique` porte sur ce qui existe **hors
+  du dépôt** (une notion, une commande, une bibliothèque) et se termine par « voilà ce que
+  c'est » ; `/detail` va lire **ce** code, chiffre les options et **recommande**.
+  *Impact rétroactif : aucun — précision de périmètre, aucun changement de comportement.*
+
+---
+
 ## 1.5.0 — 2026-08-24
 
 Rapatriement depuis le **socle Décibel**, créé la veille à partir du starter de l'équipe.
