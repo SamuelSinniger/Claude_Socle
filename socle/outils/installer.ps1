@@ -89,7 +89,12 @@ if (-not (Test-Path $dossierSocle)) { New-Item -ItemType Directory -Force -Path 
 $cheminJson = $Socle -replace '\\', '/'
 $contenu = Get-Content $Manifeste -Raw
 $contenu = $contenu -replace '(?m)^(  "depot": .*)$', "`$1`n  ""clone_local"": ""$cheminJson"","
-Set-Content -Path (Join-Path $dossierSocle 'socle.json') -Value $contenu -Encoding utf8 -NoNewline
+# Ecriture SANS BOM : `Set-Content -Encoding utf8` en PowerShell 5.1 en ajoute un, et le
+# manifeste pose ici differerait alors, octet pour octet, de celui que pose installer.sh.
+[System.IO.File]::WriteAllText(
+    (Join-Path $dossierSocle 'socle.json'),
+    $contenu,
+    (New-Object System.Text.UTF8Encoding $false))
 Write-Host "  pose     socle/socle.json (clone_local = $Socle)"
 
 if ($copierModeles) {

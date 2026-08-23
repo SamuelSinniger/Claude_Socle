@@ -46,6 +46,15 @@ case "$SUBJECT" in
     docs:*|docs\(*|"doc:"*) exit 0 ;;
 esac
 
+# commit du socle lui-meme (installation, mise a jour, adoption) : il pose des agents,
+# des commandes et un manifeste, jamais du code du projet. Sans cette sortie, une
+# installation compte pour un "gros changement" (des milliers de lignes, .gitattributes
+# et .githooks/post-commit comptes comme du code) et met en file une mise a jour de doc
+# qui n'a rien a dire sur le projet.
+case "$SUBJECT" in
+    socle:*|"socle "*) exit 0 ;;
+esac
+
 # --- mesure du changement ---------------------------------------------------
 
 NUMSTAT=$(git diff-tree --root --no-commit-id -r --numstat HEAD 2>/dev/null)

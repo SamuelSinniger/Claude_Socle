@@ -111,6 +111,39 @@ L'amorçage tient désormais en **un fichier déposé dans le dossier du projet*
   *Impact rétroactif : à vérifier dans les projets déjà installés — si `CLAUDE.md` ne porte
   pas la section `⚙️ Socle commun`, le socle y est inerte : lancer `/socle install`.*
 
+Les quatre suivants viennent d'un audit des deux projets installés (Argonaute, Quizzeur) :
+chacun est un défaut que l'installation réelle a révélé et que rien n'aurait signalé.
+
+- **`check` pouvait répondre « à jour » à tort.** Il comparait les fichiers du projet à son
+  manifeste **local**, puis les deux **numéros** de version. Même numéro + contenu différent
+  — une version modifiée après avoir été installée quelque part — passait entre les deux
+  mailles. Les empreintes sont désormais comparées **aussi au manifeste amont**, et le cas a
+  sa ligne dans le tableau des constats : le numéro ment, c'est une anomalie de publication,
+  pas un retard. Corollaire : **une version déjà installée quelque part ne se modifie plus.**
+  *Impact rétroactif : relancer `/socle check` dans les projets installés — un « à jour »
+  d'avant cette correction ne prouvait rien sur le contenu.*
+- **Les lignes `.gitignore` du socle n'arrivaient jamais dans un projet existant.** Le modèle
+  ignore `.claude/doc-updater.log` et `.claude/doc-updates-pending.log`, mais les modèles ne
+  sont copiés que là où le fichier est **absent** — or tout projet existant a déjà un
+  `.gitignore`. `install` **insère** maintenant les lignes manquantes, comme il le fait déjà
+  pour le `CLAUDE.md`.
+  *Impact rétroactif : les deux projets installés n'avaient pas ces lignes et voyaient la
+  file d'attente de `doc-updater` traîner en non suivi.*
+- **L'installation du socle réveillait `doc-updater` sur elle-même.** `socle: installation
+  1.4.0` comptait pour un « gros changement » (2 471 lignes ; `.gitattributes`,
+  `.githooks/post-commit` et `socle/socle.json` comptés comme du code) et mettait en file une
+  mise à jour de doc qui n'avait rien à dire du projet. Le hook s'abstient désormais sur les
+  sujets `socle:`, comme il le fait déjà sur `docs:`.
+  *Impact rétroactif : aucun — vider la file (`.claude/doc-updates-pending.log`) si elle ne
+  contient que des commits de socle.*
+- **`installer.ps1` écrivait `socle/socle.json` avec un BOM** (`Set-Content -Encoding utf8`
+  en PowerShell 5.1 en ajoute un), là où `installer.sh` n'en met pas : deux projets installés
+  depuis la même version n'avaient pas le même manifeste, octet pour octet. Écriture par
+  `UTF8Encoding($false)` ; les deux installeurs produisent maintenant exactement le même
+  fichier — vérifié par `cmp`.
+  *Impact rétroactif : Quizzeur porte ce BOM ; il disparaît à la prochaine copie du
+  manifeste.*
+
 ---
 
 ## 1.3.0 — 2026-08-22

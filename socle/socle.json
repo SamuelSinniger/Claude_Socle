@@ -15,10 +15,10 @@
     { "source": "socle/commandes/detail.md", "destination": ".claude/commands/detail.md", "sha256": "9526bee79d6da247" },
     { "source": "socle/commandes/interop.md", "destination": ".claude/commands/interop.md", "sha256": "ee83772f479d918a" },
     { "source": "socle/commandes/point.md", "destination": ".claude/commands/point.md", "sha256": "2be6f03c8071f690" },
-    { "source": "socle/commandes/socle.md", "destination": ".claude/commands/socle.md", "sha256": "6448a8fec56c4400" },
+    { "source": "socle/commandes/socle.md", "destination": ".claude/commands/socle.md", "sha256": "4595b5c2d13760a4" },
     { "source": "socle/commandes/update-docs.md", "destination": ".claude/commands/update-docs.md", "sha256": "efef9aacef449a78" },
     { "source": "socle/githooks/README.md", "destination": ".githooks/README.md", "sha256": "d4afccd9adff6c65" },
-    { "source": "socle/githooks/post-commit", "destination": ".githooks/post-commit", "sha256": "1fbd463a371a2533" }
+    { "source": "socle/githooks/post-commit", "destination": ".githooks/post-commit", "sha256": "56627647703cfa2a" }
   ],
   "modeles": [
     { "source": "socle/modeles/CLAUDE.md", "destination": "CLAUDE.md", "sha256": "dc4eb7c368870689" },

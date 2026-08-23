@@ -41,7 +41,10 @@ pratique retenue, raison, date).
 1. Lire `socle/socle.json` local (version installée) et celui du dépôt socle (version
    disponible).
 2. Pour **chaque** entrée de `fichiers`, recalculer l'empreinte de la **destination** dans
-   ce projet (`sha256sum <destination> | cut -c1-16`) et la comparer :
+   ce projet (`sha256sum <destination> | cut -c1-16`) et la comparer **aux deux manifestes** :
+   le local (ce que ce projet croit avoir) *et* l'amont (ce que le socle publie aujourd'hui).
+   Comparer les seuls **numéros** de version ne suffit pas — c'est la comparaison qui laisse
+   passer le cas de la dernière ligne.
 
    | Constat | Sens | Quoi faire |
    |---|---|---|
@@ -49,6 +52,7 @@ pratique retenue, raison, date).
    | empreinte ≠ manifeste local | **fichier socle modifié localement — interdit** | proposer de convertir en dérogation, puis de restaurer |
    | destination absente | socle incomplet | à réinstaller (`update`) |
    | manifeste amont ≠ manifeste local | version en retard | `update` |
+   | empreinte ≠ manifeste **amont** alors que les deux manifestes annoncent la **même version** | **le numéro ment** : la version a bougé après avoir été installée ici | `update`, et le **dire** — c'est une anomalie de publication, pas un retard. Une version déjà installée quelque part ne se modifie plus : elle se corrige dans la suivante |
 
 3. Vérifier aussi l'inverse : une **dérogation** déclarée dans `CLAUDE.md` qui cite une règle
    `R-###` **inexistante** dans `socle/regles-communes.md` (règle retirée ou renumérotée) est
@@ -200,10 +204,17 @@ regarderait pas : il poserait le socle à côté, laissant deux corps de règles
    `socle/socle.json`.
 4. Copier les `modeles` **uniquement vers les destinations qui n'existent pas encore**. Un
    `CLAUDE.md` ou un `docs/api.md` déjà présent n'est jamais écrasé : le signaler.
-   **Exception nécessaire — le `CLAUDE.md` existant** : ne pas l'écraser, mais y **insérer**
-   les sections `⚙️ Socle commun` et `🔶 Dérogations au socle` si elles manquent (contenu pris
-   du modèle, placé après la section *Projet*). Sans ça, l'index du projet ne mentionne pas le
-   socle, et les agents ne le liront jamais : le socle serait installé et inerte.
+   **Deux exceptions nécessaires**, où sauter le modèle ne laisse pas le projet intact mais
+   incomplet — dans les deux cas, on **insère** dans le fichier existant plutôt que de
+   l'écraser ou de l'ignorer :
+   - le **`CLAUDE.md` existant** : y placer les sections `⚙️ Socle commun` et
+     `🔶 Dérogations au socle` si elles manquent (contenu pris du modèle, après la section
+     *Projet*). Sans ça, l'index du projet ne mentionne pas le socle, et les agents ne le
+     liront jamais : le socle serait installé et inerte.
+   - le **`.gitignore` existant** : y ajouter les lignes du modèle qui manquent —
+     `.claude/doc-updater.log` et `.claude/doc-updates-pending.log`. Sans ça, tout projet
+     ayant déjà un `.gitignore` — c'est-à-dire tous les projets existants — voit la file
+     d'attente de `doc-updater` traîner en non suivi, et finit par la commiter.
 5. Activer le hook : `git config core.hooksPath .githooks`.
 6. Inscrire le projet dans le `projets.md` du dépôt socle.
 7. **Commiter** (R-064) : dans le projet, `socle: installation <version>` — sans quoi les
