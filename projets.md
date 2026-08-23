@@ -6,9 +6,9 @@ Registre des projets qui utilisent ce socle. Tenu à jour par `/socle install` e
 
 | Projet | Chemin | Version du socle | Dernière synchro | Dérogations |
 |---|---|---|---|---|
-| ⟨nom⟩ | `⟨F:\...⟩` | ⟨1.0.0⟩ | ⟨AAAA-MM-JJ⟩ | ⟨nombre, ou —⟩ |
+| Argonaute | `F:/Dossiers/Documents/GitHub/Argonaute` | 1.3.0 | 2026-08-22 | — |
 
-*(aucun projet installé pour l'instant)*
+*(Argonaute : adopté le 2026-08-22 — six règles remontées au socle à cette occasion, cf. CHANGELOG 1.3.0.)*
 
 ## Après une nouvelle version du socle
 

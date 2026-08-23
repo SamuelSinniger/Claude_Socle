@@ -17,6 +17,56 @@ décider s'il faut créer un point : écrire « aucun » est une réponse valabl
 
 ---
 
+## 1.3.0 — 2026-08-22
+
+Six règles remontées de l'adoption d'**Argonaute** : sécurité serveur, droits des médias,
+sérialisation des énumérés, casse de nommage. Trois sections nouvelles — le socle n'avait
+jusqu'ici **aucune règle de sécurité**.
+
+### Ajouté
+
+- **R-023** — Le nommage suit la casse idiomatique de chaque langage du projet, telle que
+  déclarée dans `docs/conventions.md`.
+  *Impact rétroactif : un projet dont `docs/conventions.md` ne déclare pas de tableau de
+  casse est non conforme → point de mise en conformité. Le code existant est rarement en
+  cause ; c'est la **déclaration** qui manque.*
+
+- **R-100** — Toute mutation exposée par une interface distante exige une autorisation
+  vérifiée côté serveur.
+  *Impact rétroactif : **à auditer dans tout projet exposant une API**. Une route de mutation
+  sans autorisation est une faille ouverte, pas une dette de style → point de mise en
+  conformité en importance 🔴.*
+
+- **R-101** — Le filtrage de visibilité (brouillon/publié, privé/public) est appliqué côté
+  serveur ; un filtre client n'est qu'un confort d'affichage.
+  *Impact rétroactif : **à auditer**. Le cas typique est un endpoint public qui renvoie tout
+  et une interface qui masque — la donnée fuite pour qui appelle l'API directement.*
+
+- **R-110** — Tout média tiers porte crédit, licence et URL de source ; la licence est
+  obligatoire, le crédit peut manquer si l'auteur est inconnu.
+  *Impact rétroactif : un projet affichant des médias tiers sans champs de droits est non
+  conforme → point de mise en conformité, avec reprise du corpus existant (le plus coûteux :
+  l'information manquante est souvent introuvable a posteriori).*
+
+- **R-111** — L'attribution d'un média est visible là où le média apparaît.
+  *Impact rétroactif : à vérifier surface par surface. Un projet conforme à R-110 peut très
+  bien stocker les droits sans jamais les afficher — c'est le manquement le plus fréquent.*
+
+- **R-120** — Un type énuméré traversant une frontière de sérialisation est sérialisé par nom
+  textuel stable, la conversion étant portée par le type lui-même.
+  *Impact rétroactif : à auditer sur les enums déjà exposés. Le manquement ne se voit pas au
+  build — il casse un consommateur qui utilise ses propres options de sérialisation. Leçon
+  d'un bug réel (catalogue de tags cassé → carte vide).*
+
+### Note de format
+
+Les six règles portent leurs champs `Vérifiable par` et `Exception`, comme l'exige
+[`normes-format.md`](socle/normes-format.md). Les **34 règles antérieures ne les portent
+pas** : l'agent `normes` ne peut donc les traiter qu'en remarque, jamais en constat bloquant.
+Mise à niveau à prévoir dans une version ultérieure.
+
+---
+
 ## 1.2.1 — 2026-08-22
 
 ### Corrigé

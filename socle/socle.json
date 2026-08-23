@@ -1,9 +1,9 @@
 {
-  "version": "1.2.1",
+  "version": "1.3.0",
   "date": "2026-08-22",
   "depot": "https://github.com/SamuelSinniger/Claude_Socle.git",
   "fichiers": [
-    { "source": "socle/regles-communes.md", "destination": "socle/regles-communes.md", "sha256": "04f77e6e31e887f7" },
+    { "source": "socle/regles-communes.md", "destination": "socle/regles-communes.md", "sha256": "1e6f05c634fff65e" },
     { "source": "socle/normes-format.md", "destination": "socle/normes-format.md", "sha256": "b83ffbaff8d74ec5" },
     { "source": "socle/guide-doc.md", "destination": "socle/guide-doc.md", "sha256": "4268cc2a6d22e37f" },
     { "source": "socle/suivi-contrat.md", "destination": "socle/suivi-contrat.md", "sha256": "44d774dffa8c00c4" },

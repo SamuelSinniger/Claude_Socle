@@ -38,6 +38,13 @@ stack.
 - **R-022** — L'interface est dans la langue déclarée par le projet, et cette langue est
   déclarée explicitement.
 
+- **R-023** — Le nommage suit la **casse idiomatique de chaque langage** du projet, telle que
+  déclarée dans `docs/conventions.md`.
+
+  **Vérifiable par** : lecture du tableau de casse déclaré par le projet, puis relecture des
+  identifiants introduits par le diff.
+  **Exception** : les identifiants imposés par un format ou une bibliothèque externe.
+
 ## Qualité & factorisation
 
 - **R-030** — **Aucune valeur magique** : toute constante arbitraire est paramétrée dans un
@@ -137,3 +144,58 @@ stack.
   préfixe ; les exceptions sont explicites et documentées.
 - **R-091** — Valeurs répétées (couleurs, espacements) → **variables globales** ; motifs
   répétés → **classes utilitaires** partagées.
+
+## Sécurité
+
+> Principe : **ce que le client filtre, le serveur l'autorise déjà.** Une interface est une
+> commodité d'usage, jamais une frontière de sécurité — on peut toujours appeler l'API sans
+> elle.
+
+- **R-100** — Toute **mutation** exposée par une interface distante exige une **autorisation
+  vérifiée côté serveur**.
+
+  **Vérifiable par** : recensement des routes de mutation (création, modification,
+  suppression), et constat de l'attribut ou du middleware d'autorisation sur chacune.
+  **Exception** : aucune.
+
+- **R-101** — Le **filtrage de visibilité** d'une donnée (brouillon/publié, privé/public,
+  propriétaire/tiers) est appliqué **côté serveur**. Un filtre côté client est un confort
+  d'affichage, jamais la garantie.
+
+  **Vérifiable par** : appel direct de l'endpoint public hors de l'interface, et constat que
+  la donnée non publiée est absente de la réponse.
+  **Exception** : aucune.
+
+## Médias & droits
+
+> Principe : **une image sans licence est une image qu'on n'a pas le droit d'afficher.**
+> L'information de droits se perd à la source, jamais à l'affichage : ce qui n'est pas saisi
+> au moment de l'ajout est irrécupérable ensuite.
+
+- **R-110** — Tout **média tiers** manipulé par l'application porte ses métadonnées de
+  droits : **crédit**, **licence**, **URL de source**. La **licence est obligatoire** dès
+  qu'un média est renseigné ; le crédit peut manquer quand l'auteur est inconnu (domaine
+  public ancien).
+
+  **Vérifiable par** : constat des trois champs sur l'entité média, et d'un signalement
+  visible en saisie quand la licence est absente.
+  **Exception** : les médias produits par le projet lui-même, si leur licence est déclarée
+  globalement.
+
+- **R-111** — L'**attribution** d'un média est **visible là où le média apparaît**, pas
+  reléguée dans une page de mentions.
+
+  **Vérifiable par** : affichage de chaque surface montrant un média (vignette, carrousel,
+  bandeau de tête), et constat de l'attribution sur chacune.
+  **Exception** : aucune.
+
+## Sérialisation
+
+- **R-120** — Un **type énuméré** qui traverse une frontière de sérialisation est sérialisé
+  par **nom textuel stable**, jamais par ordinal, et cette conversion est **portée par le
+  type lui-même** — pas par les options de chaque consommateur.
+
+  **Vérifiable par** : lecture d'une réponse contenant l'enum, et constat d'une valeur
+  textuelle ; puis désérialisation par un consommateur configuré par défaut, sans convertisseur
+  ajouté à la main.
+  **Exception** : aucune.
