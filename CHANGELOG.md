@@ -17,6 +17,25 @@ décider s'il faut créer un point : écrire « aucun » est une réponse valabl
 
 ---
 
+## 1.6.1 — 2026-08-24
+
+### Corrigé
+
+- **Premier passage de `/standards check`, sur ce dépôt même** : le lexique d'`interop.md`
+  désignait comme **format canonique** sept formats que le catalogue ne connaissait pas.
+  Quatre étaient de vraies normes et **entrent au catalogue** — `RFC 7946` (GeoJSON, § 1),
+  `RFC 6350` (vCard, § 4), `ISO 2709` (MARC) et `ISO 15836` (Dublin Core, § 14.2), avec
+  leurs types MIME et la note de fiabilité mise à jour comme l'exige le guide de
+  contribution. Trois sont des **spécifications de fait** — GPX, BibTeX, JSON Lines — et le
+  lexique ne les présente plus comme canoniques : il les marque comme telles, en repli ou en
+  entrée acceptée.
+  *Impact rétroactif : aucun sur le code. Un projet qui exporte du GPX ou du JSON Lines reste
+  conforme — ce sont des formats acceptés, pas des manquements. Ce qui change, c'est que
+  `R-048` (« le format canonique du concept prime ») ne renvoie plus à un format qu'aucune
+  norme ne définit.*
+
+---
+
 ## 1.6.0 — 2026-08-24
 
 ### Ajouté

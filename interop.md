@@ -17,15 +17,15 @@ rattachée à un **concept canonique** `C-XXX`, et c'est le concept qui sert d'a
 
 | Concept | Définition | Aussi appelé | Format canonique | Clés d'appariement |
 |---|---|---|---|---|
-| `C-LIEU` | Un point ou une zone situé géographiquement | place, POI, spot, adresse | **GeoJSON** (GPX accepté en entrée) | coordonnées, nom + code pays/ville |
+| `C-LIEU` | Un point ou une zone situé géographiquement | place, POI, spot, adresse | **GeoJSON** (`RFC 7946`) ; GPX accepté en entrée, *spécification de fait* | coordonnées, nom + code pays/ville |
 | `C-COLLECTION` | Un regroupement ordonné ou non d'éléments, curaté par un humain | liste, playlist, itinéraire, dossier | JSON + manifeste, CSV si à plat | titre, identifiant stable |
 | `C-PERSONNE` | Un individu, réel ou moral, référencé comme auteur ou acteur | auteur, artiste, contact, créateur | vCard, sinon JSON | nom + date, identifiant d'autorité |
 | `C-OEUVRE` | Une production culturelle identifiable | artwork, morceau, film, tableau | JSON, Dublin Core si disponible | titre + auteur + année |
-| `C-DOCUMENT` | Une publication référencée par un identifiant normalisé | livre, article, revue | **MARC / ONIX**, sinon BibTeX / CSL-JSON | ISBN, ISSN, DOI |
+| `C-DOCUMENT` | Une publication référencée par un identifiant normalisé | livre, article, revue | **MARC** (`ISO 2709`) ou **ONIX**, métadonnées en **Dublin Core** (`ISO 15836`) ; BibTeX / CSL-JSON en repli, *spécifications de fait* | ISBN, ISSN, DOI |
 | `C-EVENEMENT` | Quelque chose qui a lieu à une date | rendez-vous, séance, créneau | **iCalendar** | date + intitulé + lieu |
 | `C-ETIQUETTE` | Un classement libre appliqué par l'utilisateur | tag, catégorie, mot-clé | CSV ou JSON à plat | nom normalisé |
 | `C-ETAT-UTILISATEUR` | Le rapport d'un utilisateur à un élément | favori, visité, lu, vu, prévu, note | JSON `{ élément, état, date }` | identifiant de l'élément + compte |
-| `C-JOURNAL` | Une suite d'événements horodatés propres à un utilisateur | historique, timeline, activité | JSON Lines ou CSV | horodatage + type |
+| `C-JOURNAL` | Une suite d'événements horodatés propres à un utilisateur | historique, timeline, activité | **CSV** (`RFC 4180`) ; JSON Lines accepté, *spécification de fait* | horodatage + type |
 
 **Format canonique** = le format à utiliser **par défaut** pour ce concept, dans tous les
 projets. C'est la mise en œuvre concrète de `R-042` : le choix du standard est tranché **une
