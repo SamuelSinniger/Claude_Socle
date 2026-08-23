@@ -145,9 +145,7 @@ fi
 
 # --- 5. la suite ----------------------------------------------------------------
 
-echo
-echo "  Relance la session Claude Code dans ce projet : les commandes et les agents"
-echo "  sont découverts au démarrage, une session ouverte avant l'amorçage ne les voit pas."
 if [ -f "$0" ] && [ "$(natif "$(dirname "$0")")" = "$PROJET" ]; then
+    echo
     echo "  Ce fichier a fait son travail, tu peux le supprimer : $(basename "$0")"
 fi

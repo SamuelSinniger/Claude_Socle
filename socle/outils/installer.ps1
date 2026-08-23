@@ -108,13 +108,23 @@ if (Test-Path (Join-Path $Projet '.git')) {
 }
 
 Write-Host ""
-Write-Host "Fait. Ensuite, dans ce projet :"
+Write-Host "Fait - la copie, seulement. L'installation n'est PAS terminee."
+Write-Host ""
+Write-Host "  1. RELANCE la session Claude Code dans ce projet."
+Write-Host "     Les commandes et les agents sont decouverts au demarrage : une session"
+Write-Host "     ouverte avant cette copie ne verra pas /socle."
+Write-Host ""
+Write-Host "  2. /socle install"
 if (-not $copierModeles) {
-    Write-Host "  1. /socle adopt $Socle"
-    Write-Host "     -> classe les regles existantes (rien n'est applique sans ta validation),"
-    Write-Host "        puis termine l'installation"
+    Write-Host "     Ce projet a ses propres regles : la commande bascule d'elle-meme en"
+    Write-Host "     adopt - elle les classe et te fait valider avant d'ecrire quoi que ce"
+    Write-Host "     soit, puis inscrit le socle dans TON CLAUDE.md. Sans cette etape, le"
+    Write-Host "     socle est pose mais inerte : aucun agent ne le lit."
 } else {
-    Write-Host "  1. /socle check   -> verifie l'installation"
-    Write-Host "  2. remplir CLAUDE.md section Projet puis docs/conventions.md section Concretisation"
+    Write-Host "     Elle inscrit le projet dans $Socle\projets.md, commite ce qui vient"
+    Write-Host "     d'etre pose (sinon le socle disparait au prochain clone) et liste ce"
+    Write-Host "     qui reste a remplir."
 }
-Write-Host "  Inscris le projet dans $Socle\projets.md (ou laisse /socle le faire)."
+Write-Host ""
+Write-Host "  3. remplir CLAUDE.md section Projet puis docs/conventions.md section Concretisation"
+Write-Host "     (les emplacements a remplir sont entre chevrons simples dans les modeles)"

@@ -134,9 +134,7 @@ Write-Host ""
 
 # --- 5. la suite ----------------------------------------------------------------
 
-Write-Host ""
-Write-Host "  Relance la session Claude Code dans ce projet : les commandes et les agents"
-Write-Host "  sont decouverts au demarrage, une session ouverte avant l'amorcage ne les voit pas."
 if ($PSCommandPath -and (Split-Path $PSCommandPath -Parent) -eq $Projet) {
+    Write-Host ""
     Write-Host "  Ce fichier a fait son travail, tu peux le supprimer : $(Split-Path $PSCommandPath -Leaf)"
 }

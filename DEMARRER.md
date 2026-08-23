@@ -77,15 +77,15 @@ L'installeur détecte le type de projet et adapte ce qu'il pose :
 
 | Projet | Ce qui est copié | Suite |
 |---|---|---|
-| **vierge** | les 16 fichiers distribués **+ les modèles** là où le fichier est absent | `/socle check`, puis remplir le squelette |
-| **existant, avec ses propres règles** | **uniquement** les 16 fichiers distribués — aucun modèle, `CLAUDE.md` et `docs/` intacts | `/socle adopt <socle>`, qui réconcilie les règles avec ta validation |
+| **vierge** | les 16 fichiers distribués **+ les modèles** là où le fichier est absent | `/socle install` (étape 3), puis remplir le squelette |
+| **existant, avec ses propres règles** | **uniquement** les 16 fichiers distribués — aucun modèle, `CLAUDE.md` et `docs/` intacts | `/socle install` (étape 3), qui bascule en `adopt` et réconcilie les règles avec ta validation |
 
 Il active aussi le hook (`core.hooksPath`) et t'affiche la marche à suivre. Si la détection
 se trompe, force-la : `-Mode complet` / `-Mode socle-seul` en PowerShell, `--complet` /
 `--socle-seul` en POSIX — les deux amorceurs passent l'option à l'installeur.
 
 À partir de là, `/socle` et les cinq commandes existent dans le projet : tout le reste passe
-par elles.
+par elles — à commencer par `/socle install`, qui **termine** l'installation (étape 3).
 
 Ce que l'installation pose :
 
@@ -114,7 +114,26 @@ Ferme et rouvre la session dans le projet après l'amorçage. Et note que ces co
 n'existent **que dans un projet** : le dépôt socle lui-même n'a pas de `.claude/`, ses
 commandes vivent dans `socle/commandes/`, d'où elles sont distribuées.
 
-## 3. Remplir le squelette — dans cet ordre
+## 3. Terminer l'installation — `/socle install`
+
+**L'amorçage ne suffit pas.** Le script fait la copie ; il ne sait rien faire qui demande du
+jugement. Première commande de la session que tu viens de rouvrir :
+
+```
+/socle install
+```
+
+Elle se route toute seule selon ce que le script a trouvé :
+
+| Projet | Ce que `/socle install` fait de plus | Sans quoi |
+|---|---|---|
+| **vierge** | inscrit le projet dans le `projets.md` du socle, commite ce qui a été posé, liste ce qui reste à remplir | le projet n'est dans aucun registre — « mettre à jour partout » ne le connaît pas — et les dossiers posés, non suivis, disparaissent au prochain clone |
+| **existant, avec ses propres règles** | **bascule de lui-même en `adopt`** : inventorie tes règles, les classe en cinq catégories, te fait valider, puis insère les sections *Socle commun* et *Dérogations* dans **ton** `CLAUDE.md` et crée les points de mise en conformité | le socle est posé mais **inerte** : rien dans `CLAUDE.md` ne le mentionne, donc aucun agent ne le lit. Le pire des états — installé et sans effet |
+
+C'est la seule étape où on te demande de trancher quelque chose (le classement des règles) :
+`adopt` s'arrête sur le tableau et n'écrit rien avant ta validation.
+
+## 4. Remplir le squelette — dans cet ordre
 
 Les modèles sont truffés de `⟨placeholders⟩`. Pour les lister à tout moment :
 
@@ -142,7 +161,7 @@ Un modèle qui ne s'appliquera **jamais** à ce projet (pas d'API, pas de base d
 supprime, **avec sa ligne dans l'index `CLAUDE.md`**. Rien n'oblige un projet à porter les
 vingt fichiers.
 
-## 4. Avant d'écrire du code : regarder ce qui existe ailleurs
+## 5. Avant d'écrire du code : regarder ce qui existe ailleurs
 
 ```
 /interop check
@@ -158,7 +177,7 @@ Et dès que ce projet produit son premier export :
 /interop declare
 ```
 
-## 5. Le premier point
+## 6. Le premier point
 
 Tout travail passe par le pipeline. On ne code pas « en dehors ».
 
@@ -179,7 +198,7 @@ Deux portes ne s'ouvrent que par une décision : le **feu vert** (toi, et person
 la **conformité** (l'agent `normes`, citation à l'appui). Besoin du dessous des cartes avant
 de trancher ? `/detail P-00X`.
 
-## 6. Vérifier que l'installation tient
+## 7. Vérifier que l'installation tient
 
 ```
 /socle check

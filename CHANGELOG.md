@@ -77,6 +77,23 @@ L'amorçage tient désormais en **un fichier déposé dans le dossier du projet*
   permission refusée), l'agent laisse tout dans le dossier de travail et le dit — c'est-à-dire
   exactement le comportement d'avant.*
 
+### Corrigé
+
+- **`/socle install` n'était pas une étape.** La marche à suivre ne le nommait que dans une
+  colonne *Suite* d'un tableau : on pouvait lire `DEMARRER.md` en entier et croire qu'après
+  le script, il n'y avait plus qu'à remplir les modèles. Sur un projet **existant**, c'est
+  l'erreur qui coûte le plus cher : le script pose le socle sans toucher au `CLAUDE.md`, donc
+  rien n'y mentionne le socle, donc aucun agent ne le lit — le socle est installé et
+  **inerte**. Sur un projet neuf, elle laisse le projet hors du registre `projets.md` et les
+  dossiers posés non suivis. `DEMARRER.md` a désormais une étape 3 dédiée, entre la relance
+  de session et le remplissage du squelette.
+- Les deux installeurs ne disaient pas mieux : leur dernière ligne annonçait « Fait » puis
+  proposait `/socle check` (projet neuf) ou `/socle adopt` (projet existant), sans dire que
+  l'installation n'était pas terminée. Ils affichent maintenant les trois étapes qui
+  restent — relancer la session, `/socle install`, remplir — et ce qui se perd à les sauter.
+  *Impact rétroactif : à vérifier dans les projets déjà installés — si `CLAUDE.md` ne porte
+  pas la section `⚙️ Socle commun`, le socle y est inerte : lancer `/socle install`.*
+
 ---
 
 ## 1.3.0 — 2026-08-22

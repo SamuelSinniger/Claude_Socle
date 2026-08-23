@@ -127,13 +127,23 @@ fi
 # --- suite ---------------------------------------------------------------------
 
 echo
-echo "Fait. Ensuite, dans ce projet :"
+echo "Fait — la copie, seulement. L'installation n'est PAS terminée."
+echo
+echo "  1. RELANCE la session Claude Code dans ce projet."
+echo "     Les commandes et les agents sont découverts au démarrage : une session"
+echo "     ouverte avant cette copie ne verra pas /socle."
+echo
+echo "  2. /socle install"
 if [ "$COPIER_MODELES" = non ]; then
-    echo "  1. /socle adopt $SOCLE   → classe les règles existantes (rien n'est appliqué"
-    echo "                             sans ta validation), puis termine l'installation"
+    echo "     Ce projet a ses propres règles : la commande bascule d'elle-même en"
+    echo "     adopt — elle les classe et te fait valider avant d'écrire quoi que ce"
+    echo "     soit, puis inscrit le socle dans TON CLAUDE.md. Sans cette étape, le"
+    echo "     socle est posé mais inerte : aucun agent ne le lit."
 else
-    echo "  1. /socle check          → vérifie l'installation"
-    echo "  2. remplir CLAUDE.md § Projet puis docs/conventions.md § Concrétisation"
-    echo "     (grep -rn '⟨' CLAUDE.md docs/)"
+    echo "     Elle inscrit le projet dans $SOCLE/projets.md, commite ce qui vient"
+    echo "     d'être posé (sinon le socle disparaît au prochain clone) et liste ce"
+    echo "     qui reste à remplir."
 fi
-echo "  Inscris le projet dans $SOCLE/projets.md (ou laisse /socle le faire)."
+echo
+echo "  3. remplir CLAUDE.md § Projet puis docs/conventions.md § Concrétisation"
+echo "     (grep -rn '⟨' CLAUDE.md docs/)"
