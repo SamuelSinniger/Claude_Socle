@@ -8,6 +8,7 @@ Registre des projets qui utilisent ce socle. Tenu à jour par `/socle install` e
 |---|---|---|---|---|
 | Argonaute | `F:/Dossiers/Documents/GitHub/Argonaute` | 1.4.0 | 2026-08-23 | — |
 | Quizzeur | `F:/Dossiers/Documents/GitHub/Quizzeur` | 1.4.0 | 2026-08-23 | — |
+| GameRoom | `C:/Decibel_Sources/Applications/GameRoom` | 1.6.1 | 2026-11-12 | — |
 
 *(Argonaute : adopté le 2026-08-22 — six règles remontées au socle à cette occasion, cf. CHANGELOG 1.3.0.)*
 *(Les deux projets vérifiés le 2026-08-23 : empreintes conformes au manifeste amont, hook branché, `CLAUDE.md` portant la section Socle commun. Quizzeur avait été installé sur un 1.4.0 qui a bougé ensuite — resynchronisé à cette occasion, et c'est ce qui a fait ajouter la comparaison au manifeste amont dans `check`.)*
